@@ -1,0 +1,72 @@
+version: "3.5"
+
+services:
+    php:
+        container_name: contact_php
+        build: 
+            context: ./docker/php
+        working_dir: /usr/share/nginx/app
+        environment:
+            XDEBUG_CONFIG: remote_host=docker.for.mac.localhost remote_port=9001 remote_enable=1
+            PHP_IDE_CONFIG: serverName=web
+        networks:
+            - app
+        volumes:
+            - ./:/usr/share/nginx/app
+    
+    web:
+        container_name: contact_web
+        image: nginx:1.15
+        working_dir: /usr/share/nginx/app
+        networks:
+            - app
+        ports:
+            - "8001:80"
+        volumes:
+            - ./:/usr/share/nginx/app
+            - ./docker/web/conf/default.conf:/etc/nginx/conf.d/default.conf
+                    
+    composer:
+        image: composer            
+        volumes:
+            - .:/app
+
+    cs-fixer:
+        build:
+            context: ./docker/cs-fixer
+        volumes:
+            - .:/project
+
+    mariadb:
+        image: mariadb:10.5.5
+        container_name: contact_db
+        restart: 'always'
+        ports:
+            - "3306:3306"
+        volumes:
+            - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+            - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+        networks:
+            - app
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    
+#    ofelia:
+#        container_name: dis_mto_backend_ofelia
+#        image: mcuadros/ofelia:latest
+#        depends_on:
+#            - php
+#        command: daemon --docker
+#        volumes:
+#            - /var/run/docker.sock:/var/run/docker.sock:ro
+#        labels:
+#            ofelia.job-exec.sync-spreadsheet-db.schedule: "@every 1d"
+#            ofelia.job-exec.sync-spreadsheet-db.container: "dis_mto_backend_php"
+#            ofelia.job-exec.sync-spreadsheet-db.command: "bin/console app:sync-spreadsheet-db"
+            
+networks:
+    app:
+        driver: bridge
