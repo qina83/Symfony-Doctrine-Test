@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Model\Contact;
@@ -22,18 +24,16 @@ class ContactRepositoryDoctrine extends ServiceEntityRepository
 
     public function countActiveContact(): int
     {
-        return $this->count(["deleted" => false]);
+        return $this->count(['deleted' => false]);
     }
 
     public function findActiveContact(int $page, int $pageSize): array
     {
-        return $this->findBy(["deleted" => false], null, $pageSize, $pageSize * ($page-1));
+        return $this->findBy(['deleted' => false], null, $pageSize, $pageSize * ($page - 1));
     }
 
     public function findActive(string $id): ?Contact
     {
-        return $this->findOneBy(["id" => UUid::fromString($id), "deleted" => false]);
+        return $this->findOneBy(['id' => UUid::fromString($id), 'deleted' => false]);
     }
-
-
 }

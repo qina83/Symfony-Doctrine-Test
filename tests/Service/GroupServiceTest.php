@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Service;
 
 use App\Model\Group;
@@ -9,12 +11,9 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
-use Symfony\Component\Uid\Uuid;
-use Webmozart\Assert\Assert;
 
 class GroupServiceTest extends TestCase
 {
-
     private GroupService $sut;
     private Prophet $prophet;
     private ObjectProphecy $em;
@@ -28,7 +27,8 @@ class GroupServiceTest extends TestCase
 
         $this->sut = new GroupService(
             $this->em->reveal(),
-            $this->repo->reveal());
+            $this->repo->reveal()
+        );
     }
 
     protected function tearDown(): void
@@ -36,9 +36,9 @@ class GroupServiceTest extends TestCase
         $this->prophet->checkPredictions();
     }
 
-    public function test_DeleteGroup()
+    public function test_DeleteGroup(): void
     {
-        $groupId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+        $groupId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $group = new Group();
         $group->setId($groupId);
         $this->repo->findActive($groupId)->willReturn($group);
@@ -51,9 +51,9 @@ class GroupServiceTest extends TestCase
         self::assertTrue($group->isDeleted());
     }
 
-    public function test_DeleteGroup_groupNotExists_mustWork()
+    public function test_DeleteGroup_groupNotExists_mustWork(): void
     {
-        $groupId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+        $groupId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $this->repo->findActive(Argument::any())->willReturn(null);
 
         $this->sut->deleteGroup($groupId);
@@ -61,36 +61,36 @@ class GroupServiceTest extends TestCase
         self::assertTrue(true);
     }
 
-    public function test_CreateGroup()
+    public function test_CreateGroup(): void
     {
         $this->em->persist(Argument::any())->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
-        $this->sut->createGroup("name");
+        $this->sut->createGroup('name');
 
         self:self::assertTrue(true);
     }
 
-    public function test_updateGroupName(){
-        $groupId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+    public function test_updateGroupName(): void
+    {
+        $groupId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $group = new Group();
         $group->setId($groupId);
-        $this->repo->findActive("da480bf3-8adb-4626-ba03-68de2d1c8368")->willReturn($group);
+        $this->repo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($group);
 
-        $this->sut->updateGroupName($groupId, "newName");
+        $this->sut->updateGroupName($groupId, 'newName');
 
         $this->em->persist($group)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
 
-        self::assertEquals("newName", $group->getName());
-
+        self::assertEquals('newName', $group->getName());
     }
 
-    public function test_updateGroupName_groupNotExists_mustThrowException(){
-        $groupId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+    public function test_updateGroupName_groupNotExists_mustThrowException(): void
+    {
+        $groupId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $this->repo->findActive(Argument::any())->willReturn(null);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->sut->updateGroupName($groupId, "newName");
+        $this->sut->updateGroupName($groupId, 'newName');
     }
-
 }

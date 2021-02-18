@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Model\Contact;
-use App\Model\Group;
 use App\Repository\ContactRepositoryDoctrine;
 use App\Repository\GroupRepositoryDoctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Uid\Uuid;
 
 class ContactService
 {
@@ -19,9 +19,6 @@ class ContactService
 
     /**
      * ContactService constructor.
-     * @param EntityManagerInterface $em
-     * @param ContactRepositoryDoctrine $contactRepo
-     * @param GroupRepositoryDoctrine $groupRepo
      */
     public function __construct(EntityManagerInterface $em, ContactRepositoryDoctrine $contactRepo, GroupRepositoryDoctrine $groupRepo)
     {
@@ -29,7 +26,6 @@ class ContactService
         $this->contactRepo = $contactRepo;
         $this->groupRepo = $groupRepo;
     }
-
 
     public function createContact(string $name): string
     {
@@ -42,34 +38,37 @@ class ContactService
         return $contact->getId();
     }
 
-    public function updateContactName(string $contactId, string $name)
+    public function updateContactName(string $contactId, string $name): void
     {
         $contact = $this->contactRepo->findActive($contactId);
-        if ($contact != null && !$contact->isDeleted()) {
+        if (null != $contact && !$contact->isDeleted()) {
             $contact->setName($name);
             $this->em->persist($contact);
             $this->em->flush();
-        } else throw new InvalidArgumentException("Contact doesn't exists");
+        } else {
+            throw new InvalidArgumentException("Contact doesn't exists");
+        }
     }
 
-    public function deleteContact(string $contactId)
+    public function deleteContact(string $contactId): void
     {
         $contact = $this->contactRepo->findActive($contactId);
-        if ($contact != null) {
+        if (null != $contact) {
             $contact->markAsDeleted();
             $this->em->persist($contact);
             $this->em->flush();
         }
     }
 
-    #[ArrayShape(["totalItems" => "int", "totalPages" => "false|float"])]
-    public function calculatePaginationInfo(?int $pageSize): array{
-
+    //[ArrayShape(["totalItems" => "int", "totalPages" => "false|float"])]
+    public function calculatePaginationInfo(?int $pageSize): array
+    {
         $totalItems = $this->contactRepo->countActiveContact();
         $totalPages = ceil($totalItems / $pageSize);
+
         return [
-            "totalItems"=>$totalItems,
-            "totalPages"=>$totalPages
+            'totalItems' => $totalItems,
+            'totalPages' => $totalPages,
         ];
     }
 
@@ -83,27 +82,31 @@ class ContactService
         return $this->contactRepo->findActive($contactId);
     }
 
-    public function addContactToGroup(string $contactId, string $groupId)
+    public function addContactToGroup(string $contactId, string $groupId): void
     {
         $contact = $this->contactRepo->findActive($contactId);
-        if (!$contact) throw new InvalidArgumentException("Contact not found");
-
+        if (!$contact) {
+            throw new InvalidArgumentException('Contact not found');
+        }
         $group = $this->groupRepo->findActive($groupId);
-        if (!$group) throw new InvalidArgumentException("Group not found");
-
+        if (!$group) {
+            throw new InvalidArgumentException('Group not found');
+        }
         $contact->addGroup($group);
         $this->em->persist($contact);
         $this->em->flush();
     }
 
-    public function removeContactFromGroup(string $contactId, string $groupId)
+    public function removeContactFromGroup(string $contactId, string $groupId): void
     {
         $contact = $this->contactRepo->findActive($contactId);
-        if (!$contact) throw new InvalidArgumentException("Contact not found");
-
+        if (!$contact) {
+            throw new InvalidArgumentException('Contact not found');
+        }
         $group = $this->groupRepo->findActive($groupId);
-        if (!$group) throw new InvalidArgumentException("Group not found");
-
+        if (!$group) {
+            throw new InvalidArgumentException('Group not found');
+        }
         $contact->removeGroup($group);
         $this->em->persist($contact);
         $this->em->flush();

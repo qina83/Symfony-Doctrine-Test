@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,51 +22,36 @@ class Group
     {
         $this->id = Uuid::v4();
         $this->deleted = false;
-        $this->name = "";
+        $this->name = '';
         $this->contacts = new ArrayCollection();
     }
 
-    /**
-     * @return Collection
-     */
     public function getContacts(): Collection
     {
         return $this->contacts;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id->toRfc4122();
     }
 
-    /**
-     * @param string $id
-     */
     public function setId(string $id): void
     {
         $this->id = Uuid::fromString($id);
     }
 
-    public function markAsDeleted()
+    public function markAsDeleted(): void
     {
         $this->deleted = true;
     }
@@ -73,6 +60,4 @@ class Group
     {
         return $this->deleted;
     }
-
-
 }

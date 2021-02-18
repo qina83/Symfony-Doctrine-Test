@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 use App\Model\Contact;
 
@@ -17,7 +18,7 @@ class ContactMapper
             'id' => $contact->getId(),
             'name' => $contact->getName(),
             'isDeleted' => $contact->isDeleted(),
-            'groups'=>$groupsDTO
+            'groups' => $groupsDTO,
         ];
     }
 }

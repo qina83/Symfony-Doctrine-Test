@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Model;
 
 use App\Model\Address;
 use App\Model\Contact;
-
 use App\Model\Group;
 use PHPUnit\Framework\TestCase;
 
-
 class ContactTest extends TestCase
 {
-    public function test_address()
+    public function test_address(): void
     {
         $contact = new Contact();
         $address = new Address();
@@ -21,11 +21,10 @@ class ContactTest extends TestCase
         $addresses = $contact->getAddresses();
 
         self::assertCount(1, $addresses);
-        self::assertEquals($address, $addresses->first(), "address");
-
+        self::assertEquals($address, $addresses->first(), 'address');
     }
 
-    public function test_addMultiAddress()
+    public function test_addMultiAddress(): void
     {
         $contact = new Contact();
         $address1 = new Address();
@@ -37,11 +36,11 @@ class ContactTest extends TestCase
         $addresses = $contact->getAddresses();
 
         self::assertCount(2, $addresses);
-        self::assertEquals($address1, $addresses->first(), "address1");
-        self::assertEquals($address2, $addresses->next(), "address2");
+        self::assertEquals($address1, $addresses->first(), 'address1');
+        self::assertEquals($address2, $addresses->next(), 'address2');
     }
 
-    public function test_addDoubleAddress()
+    public function test_addDoubleAddress(): void
     {
         $contact = new Contact();
         $address1 = new Address();
@@ -52,11 +51,10 @@ class ContactTest extends TestCase
         $addresses = $contact->getAddresses();
 
         self::assertCount(1, $addresses);
-        self::assertEquals($address1, $addresses->first(), "address");
+        self::assertEquals($address1, $addresses->first(), 'address');
     }
 
-
-    public function test_group()
+    public function test_group(): void
     {
         $contact = new Contact();
         $group = new Group();
@@ -66,11 +64,10 @@ class ContactTest extends TestCase
         $groups = $contact->getGroups();
 
         self::assertCount(1, $groups);
-        self::assertEquals($group, $groups->first(), "group");
-
+        self::assertEquals($group, $groups->first(), 'group');
     }
 
-    public function test_addDoubleGroups()
+    public function test_addDoubleGroups(): void
     {
         $contact = new Contact();
         $group1 = new Group();
@@ -81,10 +78,10 @@ class ContactTest extends TestCase
         $groups = $contact->getGroups();
 
         self::assertCount(1, $groups);
-        self::assertEquals($group1, $groups->first(), "group1");
+        self::assertEquals($group1, $groups->first(), 'group1');
     }
 
-    public function test_addMultiGroups()
+    public function test_addMultiGroups(): void
     {
         $contact = new Contact();
         $group1 = new Group();
@@ -97,11 +94,11 @@ class ContactTest extends TestCase
 
         self::assertCount(2, $groups);
 
-        self::assertEquals($group1, $groups->first(), "group1");
-        self::assertEquals($group2, $groups->next(), "group2");
+        self::assertEquals($group1, $groups->first(), 'group1');
+        self::assertEquals($group2, $groups->next(), 'group2');
     }
 
-    public function test_removeAddress()
+    public function test_removeAddress(): void
     {
         $contact = new Contact();
         $address1 = new Address();
@@ -114,10 +111,10 @@ class ContactTest extends TestCase
         $addresses = $contact->getAddresses();
 
         self::assertCount(1, $addresses);
-        self::assertEquals($address2, $addresses->first(), "address1");
+        self::assertEquals($address2, $addresses->first(), 'address1');
     }
 
-    public function test_removeGroup()
+    public function test_removeGroup(): void
     {
         $contact = new Contact();
         $group1 = new Group();
@@ -126,7 +123,6 @@ class ContactTest extends TestCase
         $contact->addGroup($group2);
 
         $contact->removeGroup($group1);
-
 
         $groups = $contact->getGroups();
 

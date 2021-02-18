@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Service;
 
 use App\Model\Contact;
@@ -10,8 +12,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
-use Symfony\Component\Uid\Uuid;
-
 
 class ContactServiceTest extends TestCase
 {
@@ -32,7 +32,8 @@ class ContactServiceTest extends TestCase
         $this->sut = new ContactService(
             $this->em->reveal(),
             $this->contactRepo->reveal(),
-            $this->groupRepo->reveal());
+            $this->groupRepo->reveal()
+        );
     }
 
     protected function tearDown(): void
@@ -40,19 +41,19 @@ class ContactServiceTest extends TestCase
         $this->prophet->checkPredictions();
     }
 
-    public function test_CreateContact()
+    public function test_CreateContact(): void
     {
         $this->em->persist(Argument::any())->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
-        $this->sut->createContact("name");
+        $this->sut->createContact('name');
 
         self:
         self::assertTrue(true);
     }
 
-    public function test_DeleteContact()
+    public function test_DeleteContact(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $contact = new Contact();
         $contact->setId($contactId);
         $this->contactRepo->findActive($contactId)->willReturn($contact);
@@ -65,9 +66,9 @@ class ContactServiceTest extends TestCase
         self::assertTrue($contact->isDeleted());
     }
 
-    public function test_DeleteContact_contactNotExists_mustWork()
+    public function test_DeleteContact_contactNotExists_mustWork(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $this->contactRepo->findActive(Argument::any())->willReturn(null);
 
         $this->sut->deleteContact($contactId);
@@ -75,37 +76,34 @@ class ContactServiceTest extends TestCase
         self::assertTrue(true);
     }
 
-
-    public function test_updateContactName()
+    public function test_updateContactName(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $contact = new Contact();
         $contact->setId($contactId);
-        $this->contactRepo->findActive("da480bf3-8adb-4626-ba03-68de2d1c8368")->willReturn($contact);
+        $this->contactRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($contact);
 
         $this->em->persist($contact)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
 
-        $this->sut->updateContactName($contactId, "newName");
+        $this->sut->updateContactName($contactId, 'newName');
 
-        self::assertEquals("newName", $contact->getName());
-
+        self::assertEquals('newName', $contact->getName());
     }
 
-    public function test_updateContactName_contactNotExists_mustThrowException()
+    public function test_updateContactName_contactNotExists_mustThrowException(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $this->contactRepo->findActive(Argument::any())->willReturn(null);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->sut->updateContactName($contactId, "newName");
-
+        $this->sut->updateContactName($contactId, 'newName');
     }
 
-    public function test_addContactToGroup_mustWork()
+    public function test_addContactToGroup_mustWork(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
-        $groupId = "b0c09227-5cc1-4869-bbdb-008cae9c3e3d";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $contact = new Contact();
         $contact->setId($contactId);
         $group = new Group();
@@ -121,14 +119,12 @@ class ContactServiceTest extends TestCase
 
         self::assertCount(1, $contact->getGroups());
         self::assertEquals($groupId, $contact->getGroups()->first()->getId());
-
-
     }
 
-    public function test_addContactToGroup_contactNotExists_MustThrowException()
+    public function test_addContactToGroup_contactNotExists_MustThrowException(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
-        $groupId = "b0c09227-5cc1-4869-bbdb-008cae9c3e3d";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $group = new Group();
         $group->setId($groupId);
 
@@ -143,10 +139,10 @@ class ContactServiceTest extends TestCase
         $this->sut->addContactToGroup($contactId, $groupId);
     }
 
-    public function test_addContactToGroup_groupNotExists_MustThrowException()
+    public function test_addContactToGroup_groupNotExists_MustThrowException(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
-        $groupId = "b0c09227-5cc1-4869-bbdb-008cae9c3e3d";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $contact = new Contact();
         $contact->setId($contactId);
 
@@ -161,10 +157,10 @@ class ContactServiceTest extends TestCase
         $this->sut->addContactToGroup($contactId, $groupId);
     }
 
-    public function test_addContactToGroup_userIsAlreadyInGroup_MustWork()
+    public function test_addContactToGroup_userIsAlreadyInGroup_MustWork(): void
     {
-        $contactId = "da480bf3-8adb-4626-ba03-68de2d1c8368";
-        $groupId = "b0c09227-5cc1-4869-bbdb-008cae9c3e3d";
+        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $contact = new Contact();
         $contact->setId($contactId);
         $group = new Group();
@@ -183,7 +179,6 @@ class ContactServiceTest extends TestCase
         self::assertEquals($groupId, $contact->getGroups()->first()->getId());
     }
 
-
     public function dataProvider_calculatePaginationInfo()
     {
         return [
@@ -201,15 +196,16 @@ class ContactServiceTest extends TestCase
 
     /**
      * @dataProvider dataProvider_calculatePaginationInfo
+     *
+     * @param mixed $pageSize
+     * @param mixed $totalItems
+     * @param mixed $excpectedResults
      */
-    public function test_calculatePaginationInfo($pageSize, $totalItems, $excpectedResults)
+    public function test_calculatePaginationInfo($pageSize, $totalItems, $excpectedResults): void
     {
         $this->contactRepo->countActiveContact()->willReturn($totalItems);
         $paginationInfo = $this->sut->calculatePaginationInfo($pageSize);
 
-        self::assertEquals($excpectedResults, $paginationInfo["totalPages"]);
-
+        self::assertEquals($excpectedResults, $paginationInfo['totalPages']);
     }
-
-
 }

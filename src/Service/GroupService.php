@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -7,7 +8,6 @@ use App\Model\Group;
 use App\Repository\GroupRepositoryDoctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
-use Symfony\Component\Uid\Uuid;
 
 class GroupService
 {
@@ -16,7 +16,6 @@ class GroupService
 
     /**
      * ContactService constructor.
-     * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em, GroupRepositoryDoctrine $groupRepo)
     {
@@ -35,29 +34,30 @@ class GroupService
         return $group->getId();
     }
 
-    public function deleteGroup(string $groupId)
+    public function deleteGroup(string $groupId): void
     {
         $group = $this->groupRepo->findActive($groupId);
-        if ($group != null) {
+        if (null != $group) {
             $group->markAsDeleted();
             $this->em->persist($group);
             $this->em->flush();
         }
     }
 
-    public function updateGroupName(string $groupId, string $name){
+    public function updateGroupName(string $groupId, string $name): void
+    {
         $group = $this->groupRepo->findActive($groupId);
-        if ($group != null && !$group->isDeleted()) {
+        if (null != $group && !$group->isDeleted()) {
             $group->setName($name);
             $this->em->persist($group);
             $this->em->flush();
+        } else {
+            throw new InvalidArgumentException("Group doesn't exists");
         }
-        else throw new InvalidArgumentException("Group doesn't exists");
     }
 
     public function listActiveGroups(): array
     {
         return $this->groupRepo->findActiveGroups();
     }
-
 }

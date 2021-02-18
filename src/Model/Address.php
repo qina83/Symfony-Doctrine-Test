@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Model;
 
 use Symfony\Component\Uid\Uuid;
@@ -16,9 +18,6 @@ class Address
         $this->id = Uuid::v4();
     }
 
-    /**
-     * @return Uuid
-     */
     public function getId(): Uuid
     {
         return $this->id;
@@ -32,12 +31,8 @@ class Address
         return $this->id->toBinary();
     }
 
-    /**
-     * @param Uuid $id
-     */
     public function setId(Uuid $id): void
     {
         $this->id = $id;
     }
-
 }

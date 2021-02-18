@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Model\Group;
@@ -20,13 +22,13 @@ class GroupRepositoryDoctrine extends ServiceEntityRepository
         parent::__construct($registry, Group::class);
     }
 
-    public function findActiveGroups(): array{
-        return $this->findBy(["deleted"=> false]);
+    public function findActiveGroups(): array
+    {
+        return $this->findBy(['deleted' => false]);
     }
 
     public function findActive($id): ?Group
     {
-        return $this->findOneBy(["id" => UUid::fromString($id), "deleted" => false]);
+        return $this->findOneBy(['id' => UUid::fromString($id), 'deleted' => false]);
     }
-
 }
