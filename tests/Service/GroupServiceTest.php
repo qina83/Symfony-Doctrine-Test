@@ -23,7 +23,7 @@ class GroupServiceTest extends TestCase
     {
         $this->prophet = new Prophet();
         $this->em = $this->prophet->prophesize("Doctrine\ORM\EntityManagerInterface");
-        $this->repo = $this->prophet->prophesize("App\Repository\GroupRepositoryDoctrine");
+        $this->repo = $this->prophet->prophesize("App\Repository\GroupRepositoryInterface");
 
         $this->sut = new GroupService(
             $this->em->reveal(),

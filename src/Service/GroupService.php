@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Group;
-use App\Repository\GroupRepositoryDoctrine;
+use App\Repository\GroupRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 
-class GroupService
+class GroupService implements GroupServiceInterface
 {
     private EntityManagerInterface $em;
-    private GroupRepositoryDoctrine $groupRepo;
+    private GroupRepositoryInterface $groupRepo;
 
     /**
      * ContactService constructor.
      */
-    public function __construct(EntityManagerInterface $em, GroupRepositoryDoctrine $groupRepo)
+    public function __construct(EntityManagerInterface $em, GroupRepositoryInterface $groupRepo)
     {
         $this->em = $em;
         $this->groupRepo = $groupRepo;

@@ -5,22 +5,21 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Contact;
-use App\Repository\ContactRepositoryDoctrine;
-use App\Repository\GroupRepositoryDoctrine;
+use App\Repository\ContactRepositoryInterface;
+use App\Repository\GroupRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
-use JetBrains\PhpStorm\ArrayShape;
 
-class ContactService
+class ContactService implements ContactServiceInterface
 {
     private EntityManagerInterface $em;
-    private ContactRepositoryDoctrine $contactRepo;
-    private GroupRepositoryDoctrine $groupRepo;
+    private ContactRepositoryInterface $contactRepo;
+    private GroupRepositoryInterface $groupRepo;
 
     /**
      * ContactService constructor.
      */
-    public function __construct(EntityManagerInterface $em, ContactRepositoryDoctrine $contactRepo, GroupRepositoryDoctrine $groupRepo)
+    public function __construct(EntityManagerInterface $em, ContactRepositoryInterface $contactRepo, GroupRepositoryInterface $groupRepo)
     {
         $this->em = $em;
         $this->contactRepo = $contactRepo;
@@ -60,8 +59,8 @@ class ContactService
         }
     }
 
-    //[ArrayShape(["totalItems" => "int", "totalPages" => "false|float"])]
-    public function calculatePaginationInfo(?int $pageSize): array
+
+    public function calculatePaginationInfo(int $pageSize): array
     {
         $totalItems = $this->contactRepo->countActiveContact();
         $totalPages = ceil($totalItems / $pageSize);
@@ -72,7 +71,7 @@ class ContactService
         ];
     }
 
-    public function listActiveContact(?int $page, ?int $pageSize): array
+    public function listActiveContact(int $page, int $pageSize): array
     {
         return $this->contactRepo->findActiveContact($page, $pageSize);
     }
@@ -111,4 +110,6 @@ class ContactService
         $this->em->persist($contact);
         $this->em->flush();
     }
+
+
 }

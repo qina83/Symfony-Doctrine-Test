@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\ContactService;
+use App\Service\ContactServiceInterface;
 use ContactMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,12 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ContactController extends AbstractController
 {
     const MAX_ITEMS_PER_PAGE = 3;
-    private ContactService $contactService;
+    private ContactServiceInterface $contactService;
 
     /**
      * ContactController constructor.
      */
-    public function __construct(ContactService $contactService)
+    public function __construct(ContactServiceInterface $contactService)
     {
         $this->contactService = $contactService;
     }
@@ -46,14 +46,11 @@ class ContactController extends AbstractController
      */
     public function listActiveContact(Request $request): Response
     {
-        $page = $request->query->get('page');
-        $pageSize = $request->query->get('pageSize');
-        if (!$pageSize || $pageSize > self::MAX_ITEMS_PER_PAGE) {
-            $pageSize = self::MAX_ITEMS_PER_PAGE;
-        }
-        if (!$page || $page < 1) {
-            $page = 1;
-        }
+        $pageSizePar = $request->query->get('pageSize');
+        $pagePar = $request->query->get('page');
+
+        $pageSize = max(1, intval($pageSizePar));
+        $page = min(self::MAX_ITEMS_PER_PAGE, intval($pagePar));
 
         $paginationInfo = $this->contactService->calculatePaginationInfo($pageSize);
         $contacts = $this->contactService->listActiveContact($page, $pageSize);
@@ -119,4 +116,26 @@ class ContactController extends AbstractController
 
         return new JsonResponse('', Response::HTTP_NO_CONTENT);
     }
+
+    /**
+     * @Route("/contact/{contactId}/address", methods={"POST"})
+     */
+    public function addContactAddress(string $contactId, Request $request): Response
+    {
+        $requestData = json_decode($request->getContent(), true);
+        if (!$requestData) {
+            return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
+        }
+
+        $groupId = $requestData['groupId'];
+    }
+
+    /**
+     * @Route("/contact/{contactId}/address/{addressId}", methods={"DELETE"})
+     */
+    public function removeContactAddress(string $contactId, string $addressId): Response
+    {
+
+    }
+
 }

@@ -9,6 +9,9 @@ use Symfony\Component\Uid\Uuid;
 class Address
 {
     private Uuid $id;
+    private string $city;
+    private string $street;
+    private string $civicNumber;
 
     /**
      * Address constructor.
@@ -18,17 +21,57 @@ class Address
         $this->id = Uuid::v4();
     }
 
-    public function getId(): Uuid
+    /**
+     * @return string
+     */
+    public function getCity(): string
     {
-        return $this->id;
+        return $this->city;
     }
 
     /**
-     * @return string uuid as binary
+     * @param string $city
      */
-    public function getIdAsBinary(): string
+    public function setCity(string $city): void
     {
-        return $this->id->toBinary();
+        $this->city = $city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStreet(): string
+    {
+        return $this->street;
+    }
+
+    /**
+     * @param string $street
+     */
+    public function setStreet(string $street): void
+    {
+        $this->street = $street;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCivicNumber(): string
+    {
+        return $this->civicNumber;
+    }
+
+    /**
+     * @param string $civicNumber
+     */
+    public function setCivicNumber(string $civicNumber): void
+    {
+        $this->civicNumber = $civicNumber;
+    }
+
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     public function setId(Uuid $id): void

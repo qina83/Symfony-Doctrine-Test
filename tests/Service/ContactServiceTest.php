@@ -26,8 +26,8 @@ class ContactServiceTest extends TestCase
     {
         $this->prophet = new Prophet();
         $this->em = $this->prophet->prophesize("Doctrine\ORM\EntityManagerInterface");
-        $this->contactRepo = $this->prophet->prophesize("App\Repository\ContactRepositoryDoctrine");
-        $this->groupRepo = $this->prophet->prophesize("App\Repository\GroupRepositoryDoctrine");
+        $this->contactRepo = $this->prophet->prophesize("App\Repository\ContactRepositoryInterface");
+        $this->groupRepo = $this->prophet->prophesize("App\Repository\GroupRepositoryInterface");
 
         $this->sut = new ContactService(
             $this->em->reveal(),

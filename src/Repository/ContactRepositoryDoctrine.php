@@ -15,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
  * @method Contact[]    findAll()
  * @method Contact[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ContactRepositoryDoctrine extends ServiceEntityRepository
+class ContactRepositoryDoctrine extends ServiceEntityRepository implements ContactRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
