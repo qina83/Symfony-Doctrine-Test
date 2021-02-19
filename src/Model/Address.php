@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Symfony\Component\Uid\Uuid;
+
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class Address
 {
-    private Uuid $id;
+    private UuidInterface $id;
     private string $city;
     private string $street;
     private string $civicNumber;
@@ -18,7 +20,7 @@ class Address
      */
     public function __construct()
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::uuid4();;
     }
 
     /**
@@ -69,13 +71,8 @@ class Address
         $this->civicNumber = $civicNumber;
     }
 
-    public function getId(): Uuid
+    public function getId(): string
     {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): void
-    {
-        $this->id = $id;
+        return $this->id->toString();
     }
 }

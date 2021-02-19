@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+namespace Dummy;
+
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Uid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class UtilsTest extends TestCase
 {
     public function test_uuid_always_diff(): void
     {
-        $uid1 = UUid::v4();
-        $uid2 = UUid::v4();
+        $uid1 = Uuid::uuid4();;
+        $uid2 = Uuid::uuid4();;
         self::assertFalse($uid1->equals($uid2));
     }
 

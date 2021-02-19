@@ -6,11 +6,12 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Uid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class Group
 {
-    private Uuid $id;
+    private UuidInterface $id;
     private string $name;
     private bool $deleted;
     private Collection $persons;
@@ -20,7 +21,7 @@ class Group
      */
     public function __construct()
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::uuid4();;
         $this->deleted = false;
         $this->name = '';
         $this->persons = new ArrayCollection();
@@ -43,7 +44,7 @@ class Group
 
     public function getId(): string
     {
-        return $this->id->toRfc4122();
+        return $this->id->toString();
     }
 
     public function setId(string $id): void

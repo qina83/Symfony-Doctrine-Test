@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Model\Group;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Uid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @method Group|null find($id, $lockMode = null, $lockVersion = null)
