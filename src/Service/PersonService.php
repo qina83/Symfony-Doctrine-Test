@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-interface ContactServiceInterface
+interface PersonService
 {
     public function createContact(string $name): string;
     public function updateContactName(string $contactId, string $name): void;

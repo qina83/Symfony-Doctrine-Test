@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Model\Contact;
+use App\Model\Person;
 
-interface ContactRepositoryInterface
+interface PersonRepository
 {
     public function countActiveContact();
     public function findActiveContact(int $page, int $pageSize);
-    public function findActive(string $id): ?Contact;
+    public function findActive(string $id): ?Person;
 }

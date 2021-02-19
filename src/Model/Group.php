@@ -13,7 +13,7 @@ class Group
     private Uuid $id;
     private string $name;
     private bool $deleted;
-    private Collection $contacts;
+    private Collection $persons;
 
     /**
      * Group constructor.
@@ -23,12 +23,12 @@ class Group
         $this->id = Uuid::v4();
         $this->deleted = false;
         $this->name = '';
-        $this->contacts = new ArrayCollection();
+        $this->persons = new ArrayCollection();
     }
 
-    public function getContacts(): Collection
+    public function getPersons(): Collection
     {
-        return $this->contacts;
+        return $this->persons;
     }
 
     public function getName(): string

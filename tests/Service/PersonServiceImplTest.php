@@ -4,34 +4,34 @@ declare(strict_types=1);
 
 namespace Service;
 
-use App\Model\Contact;
+use App\Model\Person;
 use App\Model\Group;
-use App\Service\ContactService;
+use App\Service\PersonServiceImpl;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 
-class ContactServiceTest extends TestCase
+class PersonServiceImplTest extends TestCase
 {
-    private ContactService $sut;
+    private PersonServiceImpl $sut;
 
     private Prophet $prophet;
     private ObjectProphecy $em;
-    private ObjectProphecy $contactRepo;
+    private ObjectProphecy $personRepo;
     private ObjectProphecy $groupRepo;
 
     protected function setUp(): void
     {
         $this->prophet = new Prophet();
         $this->em = $this->prophet->prophesize("Doctrine\ORM\EntityManagerInterface");
-        $this->contactRepo = $this->prophet->prophesize("App\Repository\ContactRepositoryInterface");
-        $this->groupRepo = $this->prophet->prophesize("App\Repository\GroupRepositoryInterface");
+        $this->personRepo = $this->prophet->prophesize("App\Repository\PersonRepository");
+        $this->groupRepo = $this->prophet->prophesize("App\Repository\GroupRepository");
 
-        $this->sut = new ContactService(
+        $this->sut = new PersonServiceImpl(
             $this->em->reveal(),
-            $this->contactRepo->reveal(),
+            $this->personRepo->reveal(),
             $this->groupRepo->reveal()
         );
     }
@@ -54,9 +54,9 @@ class ContactServiceTest extends TestCase
     public function test_DeleteContact(): void
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $contact = new Contact();
+        $contact = new Person();
         $contact->setId($contactId);
-        $this->contactRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($contactId)->willReturn($contact);
 
         $this->sut->deleteContact($contactId);
 
@@ -69,7 +69,7 @@ class ContactServiceTest extends TestCase
     public function test_DeleteContact_contactNotExists_mustWork(): void
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $this->contactRepo->findActive(Argument::any())->willReturn(null);
+        $this->personRepo->findActive(Argument::any())->willReturn(null);
 
         $this->sut->deleteContact($contactId);
 
@@ -79,9 +79,9 @@ class ContactServiceTest extends TestCase
     public function test_updateContactName(): void
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $contact = new Contact();
+        $contact = new Person();
         $contact->setId($contactId);
-        $this->contactRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($contact);
+        $this->personRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($contact);
 
         $this->em->persist($contact)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
@@ -94,7 +94,7 @@ class ContactServiceTest extends TestCase
     public function test_updateContactName_contactNotExists_mustThrowException(): void
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $this->contactRepo->findActive(Argument::any())->willReturn(null);
+        $this->personRepo->findActive(Argument::any())->willReturn(null);
         $this->expectException(InvalidArgumentException::class);
 
         $this->sut->updateContactName($contactId, 'newName');
@@ -104,13 +104,13 @@ class ContactServiceTest extends TestCase
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $contact = new Contact();
+        $contact = new Person();
         $contact->setId($contactId);
         $group = new Group();
         $group->setId($groupId);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
-        $this->contactRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($contactId)->willReturn($contact);
 
         $this->em->persist($contact)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
@@ -129,7 +129,7 @@ class ContactServiceTest extends TestCase
         $group->setId($groupId);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
-        $this->contactRepo->findActive($contactId)->willReturn(null);
+        $this->personRepo->findActive($contactId)->willReturn(null);
 
         $this->em->persist(Argument::any())->shouldNotBeCalled();
         $this->em->flush()->shouldNotBeCalled();
@@ -143,11 +143,11 @@ class ContactServiceTest extends TestCase
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $contact = new Contact();
+        $contact = new Person();
         $contact->setId($contactId);
 
         $this->groupRepo->findActive($groupId)->willReturn(null);
-        $this->contactRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($contactId)->willReturn($contact);
 
         $this->em->persist(Argument::any())->shouldNotBeCalled();
         $this->em->flush()->shouldNotBeCalled();
@@ -161,14 +161,14 @@ class ContactServiceTest extends TestCase
     {
         $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $contact = new Contact();
+        $contact = new Person();
         $contact->setId($contactId);
         $group = new Group();
         $group->setId($groupId);
         $contact->addGroup($group);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
-        $this->contactRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($contactId)->willReturn($contact);
 
         $this->em->persist($contact)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
@@ -203,7 +203,7 @@ class ContactServiceTest extends TestCase
      */
     public function test_calculatePaginationInfo($pageSize, $totalItems, $excpectedResults): void
     {
-        $this->contactRepo->countActiveContact()->willReturn($totalItems);
+        $this->personRepo->countActiveContact()->willReturn($totalItems);
         $paginationInfo = $this->sut->calculatePaginationInfo($pageSize);
 
         self::assertEquals($excpectedResults, $paginationInfo['totalPages']);

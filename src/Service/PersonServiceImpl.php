@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Model\Contact;
-use App\Repository\ContactRepositoryInterface;
-use App\Repository\GroupRepositoryInterface;
+use App\Model\Person;
+use App\Repository\PersonRepository;
+use App\Repository\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 
-class ContactService implements ContactServiceInterface
+class PersonServiceImpl implements PersonService
 {
     private EntityManagerInterface $em;
-    private ContactRepositoryInterface $contactRepo;
-    private GroupRepositoryInterface $groupRepo;
+    private PersonRepository $personRepo;
+    private GroupRepository $groupRepo;
 
     /**
-     * ContactService constructor.
+     * PersonServiceImpl constructor.
      */
-    public function __construct(EntityManagerInterface $em, ContactRepositoryInterface $contactRepo, GroupRepositoryInterface $groupRepo)
+    public function __construct(EntityManagerInterface $em, PersonRepository $personRepo, GroupRepository $groupRepo)
     {
         $this->em = $em;
-        $this->contactRepo = $contactRepo;
+        $this->personRepo = $personRepo;
         $this->groupRepo = $groupRepo;
     }
 
     public function createContact(string $name): string
     {
-        $contact = new Contact();
+        $contact = new Person();
         $contact->setName($name);
 
         $this->em->persist($contact);
@@ -39,19 +39,19 @@ class ContactService implements ContactServiceInterface
 
     public function updateContactName(string $contactId, string $name): void
     {
-        $contact = $this->contactRepo->findActive($contactId);
+        $contact = $this->personRepo->findActive($contactId);
         if (null != $contact && !$contact->isDeleted()) {
             $contact->setName($name);
             $this->em->persist($contact);
             $this->em->flush();
         } else {
-            throw new InvalidArgumentException("Contact doesn't exists");
+            throw new InvalidArgumentException("Person doesn't exists");
         }
     }
 
     public function deleteContact(string $contactId): void
     {
-        $contact = $this->contactRepo->findActive($contactId);
+        $contact = $this->personRepo->findActive($contactId);
         if (null != $contact) {
             $contact->markAsDeleted();
             $this->em->persist($contact);
@@ -62,7 +62,7 @@ class ContactService implements ContactServiceInterface
 
     public function calculatePaginationInfo(int $pageSize): array
     {
-        $totalItems = $this->contactRepo->countActiveContact();
+        $totalItems = $this->personRepo->countActiveContact();
         $totalPages = ceil($totalItems / $pageSize);
 
         return [
@@ -73,19 +73,19 @@ class ContactService implements ContactServiceInterface
 
     public function listActiveContact(int $page, int $pageSize): array
     {
-        return $this->contactRepo->findActiveContact($page, $pageSize);
+        return $this->personRepo->findActiveContact($page, $pageSize);
     }
 
     public function find(string $contactId)
     {
-        return $this->contactRepo->findActive($contactId);
+        return $this->personRepo->findActive($contactId);
     }
 
     public function addContactToGroup(string $contactId, string $groupId): void
     {
-        $contact = $this->contactRepo->findActive($contactId);
+        $contact = $this->personRepo->findActive($contactId);
         if (!$contact) {
-            throw new InvalidArgumentException('Contact not found');
+            throw new InvalidArgumentException('Person not found');
         }
         $group = $this->groupRepo->findActive($groupId);
         if (!$group) {
@@ -98,9 +98,9 @@ class ContactService implements ContactServiceInterface
 
     public function removeContactFromGroup(string $contactId, string $groupId): void
     {
-        $contact = $this->contactRepo->findActive($contactId);
+        $contact = $this->personRepo->findActive($contactId);
         if (!$contact) {
-            throw new InvalidArgumentException('Contact not found');
+            throw new InvalidArgumentException('Person not found');
         }
         $group = $this->groupRepo->findActive($groupId);
         if (!$group) {

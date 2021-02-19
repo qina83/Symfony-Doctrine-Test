@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Service;
 
 use App\Model\Group;
-use App\Service\GroupService;
+use App\Service\GroupServiceImpl;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 
-class GroupServiceTest extends TestCase
+class GroupServiceImplTest extends TestCase
 {
-    private GroupService $sut;
+    private GroupServiceImpl $sut;
     private Prophet $prophet;
     private ObjectProphecy $em;
     private ObjectProphecy $repo;
@@ -23,9 +23,9 @@ class GroupServiceTest extends TestCase
     {
         $this->prophet = new Prophet();
         $this->em = $this->prophet->prophesize("Doctrine\ORM\EntityManagerInterface");
-        $this->repo = $this->prophet->prophesize("App\Repository\GroupRepositoryInterface");
+        $this->repo = $this->prophet->prophesize("App\Repository\GroupRepository");
 
-        $this->sut = new GroupService(
+        $this->sut = new GroupServiceImpl(
             $this->em->reveal(),
             $this->repo->reveal()
         );

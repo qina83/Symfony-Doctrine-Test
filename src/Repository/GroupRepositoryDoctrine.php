@@ -15,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
  * @method Group[]    findAll()
  * @method Group[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GroupRepositoryDoctrine extends ServiceEntityRepository implements GroupRepositoryInterface
+class GroupRepositoryDoctrine extends ServiceEntityRepository implements GroupRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -6,6 +6,6 @@
         <id name="id" type="uuid" column="id" />
         <field name="deleted" type="boolean" column="is_deleted" />
         <field name="name" column="name" />
-        <many-to-many field="contacts" mapped-by="groups" fetch="EXTRA_LAZY"  target-entity="App\Model\Contact"/>
+        <many-to-many field="persons" mapped-by="groups" fetch="EXTRA_LAZY"  target-entity="App\Model\Person"/>
     </entity>
 </doctrine-mapping>

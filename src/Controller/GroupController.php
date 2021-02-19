@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\GroupServiceInterface;
+use App\Service\GroupService;
 use GroupMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,12 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class GroupController extends AbstractController
 {
-    private GroupServiceInterface $groupService;
+    private GroupService $groupService;
 
     /**
-     * ContactController constructor.
+     * PersonController constructor.
      */
-    public function __construct(GroupServiceInterface $groupService)
+    public function __construct(GroupService $groupService)
     {
         $this->groupService = $groupService;
     }

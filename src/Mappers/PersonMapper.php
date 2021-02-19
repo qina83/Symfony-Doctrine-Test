@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Model\Contact;
+use App\Model\Person;
 
-class ContactMapper
+class PersonMapper
 {
-    public static function ContactToDto(Contact $contact): array
+    public static function ContactToDto(Person $contact): array
     {
         $groups = $contact->getGroups();
         $groupsDTO = [];

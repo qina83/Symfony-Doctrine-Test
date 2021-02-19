@@ -2,14 +2,14 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Model\Contact" table="contact">
+    <entity name="App\Model\Person" table="person">
         <id name="id" type="uuid" column="id" />
         <field name="name" column="name" />
         <field name="deleted" type="boolean" column="is_deleted" />
-        <many-to-many field="groups" inversed-by="contacts" target-entity="App\Model\Group">
-            <join-table name="contact_groups">
+        <many-to-many field="groups" inversed-by="persons" target-entity="App\Model\Group">
+            <join-table name="person_groups">
                 <join-columns>
-                    <join-column name="contact_id" referenced-column-name="id" />
+                    <join-column name="person_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
                     <join-column name="group_id" referenced-column-name="id" />
@@ -22,7 +22,7 @@
             </cascade>
             <join-table name="contact_address">
                 <join-columns>
-                    <join-column name="contact_id" referenced-column-name="id" />
+                    <join-column name="person_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
                     <join-column name="address_id" referenced-column-name="id" unique="true" />

@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\ContactServiceInterface;
-use ContactMapper;
+use App\Service\PersonService;
+use PersonMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ContactController extends AbstractController
+class PersonController extends AbstractController
 {
     const MAX_ITEMS_PER_PAGE = 3;
-    private ContactServiceInterface $contactService;
+    private PersonService $personService;
 
     /**
-     * ContactController constructor.
+     * PersonController constructor.
      */
-    public function __construct(ContactServiceInterface $contactService)
+    public function __construct(PersonService $personService)
     {
-        $this->contactService = $contactService;
+        $this->personService = $personService;
     }
 
     /**
-     * @Route("/contact", methods={"POST"})
+     * @Route("/persons", methods={"POST"})
      */
     public function createContact(Request $request): Response
     {
@@ -36,13 +36,13 @@ class ContactController extends AbstractController
         }
 
         $contactName = $requestData['contactName'];
-        $contactId = $this->contactService->createContact($contactName);
+        $contactId = $this->personService->createContact($contactName);
 
         return new JsonResponse($contactId);
     }
 
     /**
-     * @Route("/contacts", methods={"GET"})
+     * @Route("/persons", methods={"GET"})
      */
     public function listActiveContact(Request $request): Response
     {
@@ -52,11 +52,11 @@ class ContactController extends AbstractController
         $pageSize = max(1, intval($pageSizePar));
         $page = min(self::MAX_ITEMS_PER_PAGE, intval($pagePar));
 
-        $paginationInfo = $this->contactService->calculatePaginationInfo($pageSize);
-        $contacts = $this->contactService->listActiveContact($page, $pageSize);
+        $paginationInfo = $this->personService->calculatePaginationInfo($pageSize);
+        $contacts = $this->personService->listActiveContact($page, $pageSize);
         $contactsDTO = [];
         foreach ($contacts as $contact) {
-            $contactsDTO[] = ContactMapper::ContactToDto($contact);
+            $contactsDTO[] = PersonMapper::ContactToDto($contact);
         }
 
         return new JsonResponse([
@@ -66,19 +66,19 @@ class ContactController extends AbstractController
     }
 
     /**
-     * @Route("/contact/{contactId}", methods={"DELETE"})
+     * @Route("/persons/{personId}", methods={"DELETE"})
      */
-    public function deleteContact(string $contactId): Response
+    public function deleteContact(string $personId): Response
     {
-        $this->contactService->deleteContact($contactId);
+        $this->personService->deleteContact($personId);
 
         return new JsonResponse('', Response::HTTP_NO_CONTENT);
     }
 
     /**
-     * @Route("/contact/{contactId}", methods={"PUT"})
+     * @Route("/persons/{personId}", methods={"PUT"})
      */
-    public function updateContact(string $contactId, Request $request): Response
+    public function updateContact(string $personId, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
@@ -86,15 +86,15 @@ class ContactController extends AbstractController
         }
 
         $contactName = $requestData['contactName'];
-        $this->contactService->updateContactName($contactId, $contactName);
+        $this->personService->updateContactName($personId, $contactName);
 
         return new JsonResponse('', Response::HTTP_OK);
     }
 
     /**
-     * @Route("/contact/{contactId}/group", methods={"POST"})
+     * @Route("/persons/{personId}/groups", methods={"PUT"})
      */
-    public function addContactGroup(string $contactId, Request $request): Response
+    public function addContactGroup(string $personId, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
@@ -102,25 +102,25 @@ class ContactController extends AbstractController
         }
 
         $groupId = $requestData['groupId'];
-        $this->contactService->addContactToGroup($contactId, $groupId);
+        $this->personService->addContactToGroup($personId, $groupId);
 
         return new JsonResponse('', Response::HTTP_CREATED);
     }
 
     /**
-     * @Route("/contact/{contactId}/group/{groupId}", methods={"DELETE"})
+     * @Route("/persons/{personId}/groups/{groupId}", methods={"PUT"})
      */
-    public function removeContactGroup(string $contactId, string $groupId): Response
+    public function removeContactGroup(string $personId, string $groupId): Response
     {
-        $this->contactService->removeContactFromGroup($contactId, $groupId);
+        $this->personService->removeContactFromGroup($personId, $groupId);
 
         return new JsonResponse('', Response::HTTP_NO_CONTENT);
     }
 
     /**
-     * @Route("/contact/{contactId}/address", methods={"POST"})
+     * @Route("/persons/{personId}/address", methods={"POST"})
      */
-    public function addContactAddress(string $contactId, Request $request): Response
+    public function addContactAddress(string $personId, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
@@ -131,9 +131,9 @@ class ContactController extends AbstractController
     }
 
     /**
-     * @Route("/contact/{contactId}/address/{addressId}", methods={"DELETE"})
+     * @Route("/persons/{personId}/address/{addressId}", methods={"DELETE"})
      */
-    public function removeContactAddress(string $contactId, string $addressId): Response
+    public function removeContactAddress(string $personId, string $addressId): Response
     {
 
     }
