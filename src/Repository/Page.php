@@ -6,8 +6,8 @@ namespace App\Repository;
 
 class Page
 {
+    const MAX_ITEMS_PER_PAGE = 3;
     private int $size;
-
     private int $index;
 
     /**
@@ -17,8 +17,8 @@ class Page
      */
     public function __construct(int $size, int $index)
     {
-        $this->size = $size;
-        $this->index = $index;
+        $this->size = max(1, $size);
+        $this->index = min(self::MAX_ITEMS_PER_PAGE, $index);
     }
 
 

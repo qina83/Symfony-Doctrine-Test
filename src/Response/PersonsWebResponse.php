@@ -24,7 +24,7 @@ class PersonsWebResponse extends JsonResponse
         $paginationInfoDto = PaginationInfoMapper::PaginationInfoToDto($paginationInfo);
         parent::__construct([
             'items' => $personsDto,
-            'paginationInfo' => \PaginationInfoMapper::PaginationInfoToDto($paginationInfo)
+            'paginationInfo' => PaginationInfoMapper::PaginationInfoToDto($paginationInfo)
         ]);
     }
 }
