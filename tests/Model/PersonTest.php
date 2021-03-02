@@ -57,7 +57,7 @@ class PersonTest extends TestCase
     public function test_group(): void
     {
         $person = new Person("name");
-        $group = new Group();
+        $group = new Group("groupName");
 
         $person->addGroup($group);
 
@@ -70,7 +70,7 @@ class PersonTest extends TestCase
     public function test_addDoubleGroups(): void
     {
         $person = new Person("name");
-        $group1 = new Group();
+        $group1 =new Group("groupName");
 
         $person->addGroup($group1);
         $person->addGroup($group1);
@@ -84,8 +84,8 @@ class PersonTest extends TestCase
     public function test_addMultiGroups(): void
     {
         $person = new Person("name");
-        $group1 = new Group();
-        $group2 = new Group();
+        $group1 = new Group("groupName");
+        $group2 = new Group("groupName");
 
         $person->addGroup($group1);
         $person->addGroup($group2);
@@ -117,8 +117,8 @@ class PersonTest extends TestCase
     public function test_removeGroup(): void
     {
         $person = new Person("name");
-        $group1 = new Group();
-        $group2 = new Group();
+        $group1 = new Group("groupName");
+        $group2 = new Group("groupName");
         $person->addGroup($group1);
         $person->addGroup($group2);
 

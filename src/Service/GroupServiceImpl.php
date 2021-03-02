@@ -25,8 +25,7 @@ class GroupServiceImpl implements GroupService
 
     public function createGroup(string $name): string
     {
-        $group = new Group();
-        $group->setName($name);
+        $group = new Group($name);
 
         $this->em->persist($group);
         $this->em->flush();
@@ -48,7 +47,7 @@ class GroupServiceImpl implements GroupService
     {
         $group = $this->groupRepo->findActive($groupId);
         if (null != $group && !$group->isDeleted()) {
-            $group->setName($name);
+            $group->updateInfo($name);
             $this->em->persist($group);
             $this->em->flush();
         } else {

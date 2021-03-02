@@ -6,6 +6,7 @@ namespace Service;
 
 use App\Model\Group;
 use App\Service\GroupServiceImpl;
+use Grpc\Call;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -39,8 +40,7 @@ class GroupServiceImplTest extends TestCase
     public function test_DeleteGroup(): void
     {
         $groupId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $group = new Group();
-        $group->setId($groupId);
+        $group = Group::createByIdAndName($groupId, "groupName");;
         $this->repo->findActive($groupId)->willReturn($group);
 
         $this->sut->deleteGroup($groupId);
@@ -73,8 +73,7 @@ class GroupServiceImplTest extends TestCase
     public function test_updateGroupName(): void
     {
         $groupId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $group = new Group();
-        $group->setId($groupId);
+        $group = Group::createByIdAndName($groupId, "groupName");
         $this->repo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($group);
 
         $this->sut->updateGroupName($groupId, 'newName');

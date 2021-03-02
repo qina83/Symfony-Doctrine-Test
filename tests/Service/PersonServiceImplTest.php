@@ -102,8 +102,7 @@ class PersonServiceImplTest extends TestCase
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $person = Person::createByIdAndName($personId, "name");
-        $group = new Group();
-        $group->setId($groupId);
+        $group = Group::createByIdAndName($groupId, "groupName");
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
         $this->personRepo->findActive($personId)->willReturn($person);
@@ -121,8 +120,7 @@ class PersonServiceImplTest extends TestCase
     {
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $group = new Group();
-        $group->setId($groupId);
+        $group = Group::createByIdAndName($groupId, "groupName");
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
         $this->personRepo->findActive($personId)->willReturn(null);
@@ -157,8 +155,7 @@ class PersonServiceImplTest extends TestCase
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $person = Person::createByIdAndName($personId, "name");
-        $group = new Group();
-        $group->setId($groupId);
+        $group = Group::createByIdAndName($groupId, "groupName");
         $person->addGroup($group);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);

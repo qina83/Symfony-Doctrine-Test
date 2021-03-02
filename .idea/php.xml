@@ -102,7 +102,7 @@
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="19f937df-576f-41a0-adbe-e1c1204bee60" name="php" home="docker-compose://DATA" debugger_id="php.debugger.XDebug">
+      <interpreter id="48fdffb4-aca1-46c0-94bc-f8d42037ff4e" name="php" home="docker-compose://DATA" debugger_id="php.debugger.XDebug">
         <remote_data INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DOCKER_ACCOUNT_NAME="Docker" DOCKER_COMPOSE_SERVICE_NAME="php" DOCKER_REMOTE_PROJECT_PATH="/opt/project">
           <type_data command="RUN" />
           <dockerComposeConfigurationPaths>

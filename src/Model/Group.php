@@ -19,12 +19,19 @@ class Group
     /**
      * Group constructor.
      */
-    public function __construct()
+    public function __construct(string $name)
     {
         $this->id = Uuid::uuid4();;
         $this->deleted = false;
-        $this->name = '';
+        $this->name = $name;
         $this->persons = new ArrayCollection();
+    }
+
+    public static function createByIdAndName(string $id, string $name): Group
+    {
+        $group = new Group($name);
+        $group->id = uuid::fromString($id);
+        return $group;
     }
 
     public function getPersons(): Collection
@@ -37,19 +44,13 @@ class Group
         return $this->name;
     }
 
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
     public function getId(): string
     {
         return $this->id->toString();
     }
 
-    public function setId(string $id): void
-    {
-        $this->id = Uuid::fromString($id);
+    public function updateInfo(string $name){
+        $this->name = $name;
     }
 
     public function markAsDeleted(): void
