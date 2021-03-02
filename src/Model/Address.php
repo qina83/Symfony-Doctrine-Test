@@ -31,13 +31,6 @@ class Address
         return $this->city;
     }
 
-    /**
-     * @param string $city
-     */
-    public function setCity(string $city): void
-    {
-        $this->city = $city;
-    }
 
     /**
      * @return string
@@ -47,13 +40,6 @@ class Address
         return $this->street;
     }
 
-    /**
-     * @param string $street
-     */
-    public function setStreet(string $street): void
-    {
-        $this->street = $street;
-    }
 
     /**
      * @return string
@@ -63,13 +49,6 @@ class Address
         return $this->civicNumber;
     }
 
-    /**
-     * @param string $civicNumber
-     */
-    public function setCivicNumber(string $civicNumber): void
-    {
-        $this->civicNumber = $civicNumber;
-    }
 
     public function getId(): string
     {
