@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -24,7 +23,7 @@ class Group
         $this->id = Uuid::uuid4();;
         $this->deleted = false;
         $this->name = $name;
-        $this->persons = new ArrayCollection();
+        $this->persons = new ItemCollection();
     }
 
     public static function createByIdAndName(string $id, string $name): Group

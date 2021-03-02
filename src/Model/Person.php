@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -20,8 +19,8 @@ class Person
     public function __construct(string $name)
     {
         $this->id = Uuid::uuid4();
-        $this->addresses = new ArrayCollection();
-        $this->groups = new ArrayCollection();
+        $this->addresses = new ItemCollection();
+        $this->groups = new ItemCollection();
         $this->name = $name;
         $this->deleted = false;
     }
@@ -69,29 +68,21 @@ class Person
 
     public function addAddress(Address $address): void
     {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
-        }
+        $this->addresses->addItem($address);
     }
 
     public function removeAddress(Address $address): void
     {
-        if ($this->addresses->contains($address)) {
-            $this->addresses->removeElement($address);
-        }
+        $this->addresses->removeItem($address);
     }
 
     public function addGroup(Group $group): void
     {
-        if (!$this->groups->contains($group)) {
-            $this->groups->add($group);
-        }
+        $this->groups->addItem($group);
     }
 
     public function removeGroup(Group $group): void
     {
-        if ($this->groups->contains($group)) {
-            $this->groups->removeElement($group);
-        }
+        $this->groups->removeItem($group);
     }
 }
