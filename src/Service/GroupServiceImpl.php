@@ -5,21 +5,22 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Group;
+use App\Persister\GroupPersister;
 use App\Repository\GroupRepository;
-use Doctrine\ORM\EntityManagerInterface;
+
 use InvalidArgumentException;
 
 class GroupServiceImpl implements GroupService
 {
-    private EntityManagerInterface $em;
+    private GroupPersister $groupPersister;
     private GroupRepository $groupRepo;
 
     /**
      * PersonServiceImpl constructor.
      */
-    public function __construct(EntityManagerInterface $em, GroupRepository $groupRepo)
+    public function __construct(GroupPersister $groupPersister, GroupRepository $groupRepo)
     {
-        $this->em = $em;
+        $this->groupPersister = $groupPersister;
         $this->groupRepo = $groupRepo;
     }
 
@@ -27,8 +28,7 @@ class GroupServiceImpl implements GroupService
     {
         $group = new Group($name);
 
-        $this->em->persist($group);
-        $this->em->flush();
+        $this->groupPersister->persist($group);
 
         return $group->getId();
     }
@@ -38,8 +38,7 @@ class GroupServiceImpl implements GroupService
         $group = $this->groupRepo->findActive($groupId);
         if (null != $group) {
             $group->markAsDeleted();
-            $this->em->persist($group);
-            $this->em->flush();
+            $this->groupPersister->persist($group);
         }
     }
 
@@ -48,8 +47,7 @@ class GroupServiceImpl implements GroupService
         $group = $this->groupRepo->findActive($groupId);
         if (null != $group && !$group->isDeleted()) {
             $group->updateInfo($name);
-            $this->em->persist($group);
-            $this->em->flush();
+            $this->groupPersister->persist($group);
         } else {
             throw new InvalidArgumentException("Group doesn't exists");
         }

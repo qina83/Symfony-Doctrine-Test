@@ -6,7 +6,6 @@ namespace Service;
 
 use App\Model\Group;
 use App\Service\GroupServiceImpl;
-use Grpc\Call;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -17,17 +16,17 @@ class GroupServiceImplTest extends TestCase
 {
     private GroupServiceImpl $sut;
     private Prophet $prophet;
-    private ObjectProphecy $em;
+    private ObjectProphecy $groupPersister;
     private ObjectProphecy $repo;
 
     protected function setUp(): void
     {
         $this->prophet = new Prophet();
-        $this->em = $this->prophet->prophesize("Doctrine\ORM\EntityManagerInterface");
+        $this->groupPersister = $this->prophet->prophesize("App\Persister\GroupPersister");
         $this->repo = $this->prophet->prophesize("App\Repository\GroupRepository");
 
         $this->sut = new GroupServiceImpl(
-            $this->em->reveal(),
+            $this->groupPersister->reveal(),
             $this->repo->reveal()
         );
     }
@@ -45,8 +44,8 @@ class GroupServiceImplTest extends TestCase
 
         $this->sut->deleteGroup($groupId);
 
-        $this->em->persist($group)->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->groupPersister->persist($group)->shouldBeCalled();
+
 
         self::assertTrue($group->isDeleted());
     }
@@ -63,8 +62,8 @@ class GroupServiceImplTest extends TestCase
 
     public function test_CreateGroup(): void
     {
-        $this->em->persist(Argument::any())->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->groupPersister->persist(Argument::any())->shouldBeCalled();
+
         $this->sut->createGroup('name');
 
         self:self::assertTrue(true);
@@ -78,8 +77,7 @@ class GroupServiceImplTest extends TestCase
 
         $this->sut->updateGroupName($groupId, 'newName');
 
-        $this->em->persist($group)->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->groupPersister->persist($group)->shouldBeCalled();
 
         self::assertEquals('newName', $group->getName());
     }
