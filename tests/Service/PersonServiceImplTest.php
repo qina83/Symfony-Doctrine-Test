@@ -41,142 +41,136 @@ class PersonServiceImplTest extends TestCase
         $this->prophet->checkPredictions();
     }
 
-    public function test_CreateContact(): void
+    public function test_CreatePerson(): void
     {
         $this->em->persist(Argument::any())->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
-        $this->sut->createContact('name');
+        $this->sut->createPerson('name');
 
-        self:
         self::assertTrue(true);
     }
 
-    public function test_DeleteContact(): void
+    public function test_DeletePerson(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $contact = new Person();
-        $contact->setId($contactId);
-        $this->personRepo->findActive($contactId)->willReturn($contact);
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $person = Person::createByIdAndName($personId, "name");
+        $this->personRepo->findActive($personId)->willReturn($person);
 
-        $this->sut->deleteContact($contactId);
+        $this->sut->deletePerson($personId);
 
-        $this->em->persist($contact)->shouldBeCalled();
+        $this->em->persist($person)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
 
-        self::assertTrue($contact->isDeleted());
+        self::assertTrue($person->isDeleted());
     }
 
-    public function test_DeleteContact_contactNotExists_mustWork(): void
+    public function test_DeletePerson_personNotExists_mustWork(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $this->personRepo->findActive(Argument::any())->willReturn(null);
 
-        $this->sut->deleteContact($contactId);
+        $this->sut->deletePerson($personId);
 
         self::assertTrue(true);
     }
 
-    public function test_updateContactName(): void
+    public function test_updatePersonName(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $contact = new Person();
-        $contact->setId($contactId);
-        $this->personRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($contact);
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $person = Person::createByIdAndName($personId, "name");
+        $this->personRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($person);
 
-        $this->em->persist($contact)->shouldBeCalled();
+        $this->em->persist($person)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
 
-        $this->sut->updateContactName($contactId, 'newName');
+        $this->sut->updatePersonPersonalInfo($personId, 'newName');
 
-        self::assertEquals('newName', $contact->getName());
+        self::assertEquals('newName', $person->getName());
     }
 
-    public function test_updateContactName_contactNotExists_mustThrowException(): void
+    public function test_updatePersonName_personNotExists_mustThrowException(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $this->personRepo->findActive(Argument::any())->willReturn(null);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->sut->updateContactName($contactId, 'newName');
+        $this->sut->updatePersonPersonalInfo($personId, 'newName');
     }
 
-    public function test_addContactToGroup_mustWork(): void
+    public function test_addPersonToGroup_mustWork(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $contact = new Person();
-        $contact->setId($contactId);
+        $person = Person::createByIdAndName($personId, "name");
         $group = new Group();
         $group->setId($groupId);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
-        $this->personRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($personId)->willReturn($person);
 
-        $this->em->persist($contact)->shouldBeCalled();
+        $this->em->persist($person)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
 
-        $this->sut->addContactToGroup($contactId, $groupId);
+        $this->sut->addPersonToGroup($personId, $groupId);
 
-        self::assertCount(1, $contact->getGroups());
-        self::assertEquals($groupId, $contact->getGroups()->first()->getId());
+        self::assertCount(1, $person->getGroups());
+        self::assertEquals($groupId, $person->getGroups()->first()->getId());
     }
 
-    public function test_addContactToGroup_contactNotExists_MustThrowException(): void
+    public function test_addPersonToGroup_personNotExists_MustThrowException(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
         $group = new Group();
         $group->setId($groupId);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
-        $this->personRepo->findActive($contactId)->willReturn(null);
+        $this->personRepo->findActive($personId)->willReturn(null);
 
         $this->em->persist(Argument::any())->shouldNotBeCalled();
         $this->em->flush()->shouldNotBeCalled();
 
         $this->expectException(InvalidArgumentException::class);
 
-        $this->sut->addContactToGroup($contactId, $groupId);
+        $this->sut->addPersonToGroup($personId, $groupId);
     }
 
-    public function test_addContactToGroup_groupNotExists_MustThrowException(): void
+    public function test_addPersonToGroup_groupNotExists_MustThrowException(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $contact = new Person();
-        $contact->setId($contactId);
+        $person = Person::createByIdAndName($personId, "name");
 
         $this->groupRepo->findActive($groupId)->willReturn(null);
-        $this->personRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($personId)->willReturn($person);
 
         $this->em->persist(Argument::any())->shouldNotBeCalled();
         $this->em->flush()->shouldNotBeCalled();
 
         $this->expectException(InvalidArgumentException::class);
 
-        $this->sut->addContactToGroup($contactId, $groupId);
+        $this->sut->addPersonToGroup($personId, $groupId);
     }
 
-    public function test_addContactToGroup_userIsAlreadyInGroup_MustWork(): void
+    public function test_addPersonToGroup_userIsAlreadyInGroup_MustWork(): void
     {
-        $contactId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
+        $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $contact = new Person();
-        $contact->setId($contactId);
+        $person = Person::createByIdAndName($personId, "name");
         $group = new Group();
         $group->setId($groupId);
-        $contact->addGroup($group);
+        $person->addGroup($group);
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
-        $this->personRepo->findActive($contactId)->willReturn($contact);
+        $this->personRepo->findActive($personId)->willReturn($person);
 
-        $this->em->persist($contact)->shouldBeCalled();
+        $this->em->persist($person)->shouldBeCalled();
         $this->em->flush()->shouldBeCalled();
 
-        $this->sut->addContactToGroup($contactId, $groupId);
+        $this->sut->addPersonToGroup($personId, $groupId);
 
-        self::assertCount(1, $contact->getGroups());
-        self::assertEquals($groupId, $contact->getGroups()->first()->getId());
+        self::assertCount(1, $person->getGroups());
+        self::assertEquals($groupId, $person->getGroups()->first()->getId());
     }
 
     public function dataProvider_calculatePaginationInfo()
@@ -203,7 +197,7 @@ class PersonServiceImplTest extends TestCase
      */
     public function test_calculatePaginationInfo($pageSize, $totalItems, $excpectedResults): void
     {
-        $this->personRepo->countActiveContact()->willReturn($totalItems);
+        $this->personRepo->countActivePersons()->willReturn($totalItems);
         $paginationInfo = $this->sut->calculatePaginationInfo($pageSize);
 
         self::assertEquals($excpectedResults, $paginationInfo['totalPages']);

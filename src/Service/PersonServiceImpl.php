@@ -26,35 +26,34 @@ class PersonServiceImpl implements PersonService
         $this->groupRepo = $groupRepo;
     }
 
-    public function createContact(string $name): string
+    public function createPerson(string $name): string
     {
-        $contact = new Person();
-        $contact->setName($name);
+        $person = new Person($name);
 
-        $this->em->persist($contact);
+        $this->em->persist($person);
         $this->em->flush();
 
-        return $contact->getId();
+        return $person->getId();
     }
 
-    public function updateContactName(string $contactId, string $name): void
+    public function updatePersonPersonalInfo(string $personId, string $name): void
     {
-        $contact = $this->personRepo->findActive($contactId);
-        if (null != $contact && !$contact->isDeleted()) {
-            $contact->setName($name);
-            $this->em->persist($contact);
+        $person = $this->personRepo->findActive($personId);
+        if (null != $person && !$person->isDeleted()) {
+            $person->updatePersonalInfo($name);
+            $this->em->persist($person);
             $this->em->flush();
         } else {
             throw new InvalidArgumentException("Person doesn't exists");
         }
     }
 
-    public function deleteContact(string $contactId): void
+    public function deletePerson(string $personId): void
     {
-        $contact = $this->personRepo->findActive($contactId);
-        if (null != $contact) {
-            $contact->markAsDeleted();
-            $this->em->persist($contact);
+        $person = $this->personRepo->findActive($personId);
+        if (null != $person) {
+            $person->markAsDeleted();
+            $this->em->persist($person);
             $this->em->flush();
         }
     }
@@ -62,7 +61,7 @@ class PersonServiceImpl implements PersonService
 
     public function calculatePaginationInfo(int $pageSize): array
     {
-        $totalItems = $this->personRepo->countActiveContact();
+        $totalItems = $this->personRepo->countActivePersons();
         $totalPages = ceil($totalItems / $pageSize);
 
         return [
@@ -71,43 +70,43 @@ class PersonServiceImpl implements PersonService
         ];
     }
 
-    public function listActiveContact(int $page, int $pageSize): array
+    public function listActivePersons(int $page, int $pageSize): array
     {
-        return $this->personRepo->findActiveContact($page, $pageSize);
+        return $this->personRepo->findActivePersons($page, $pageSize);
     }
 
-    public function find(string $contactId)
+    public function find(string $personId)
     {
-        return $this->personRepo->findActive($contactId);
+        return $this->personRepo->findActive($personId);
     }
 
-    public function addContactToGroup(string $contactId, string $groupId): void
+    public function addPersonToGroup(string $personId, string $groupId): void
     {
-        $contact = $this->personRepo->findActive($contactId);
-        if (!$contact) {
+        $person = $this->personRepo->findActive($personId);
+        if (!$person) {
             throw new InvalidArgumentException('Person not found');
         }
         $group = $this->groupRepo->findActive($groupId);
         if (!$group) {
             throw new InvalidArgumentException('Group not found');
         }
-        $contact->addGroup($group);
-        $this->em->persist($contact);
+        $person->addGroup($group);
+        $this->em->persist($person);
         $this->em->flush();
     }
 
-    public function removeContactFromGroup(string $contactId, string $groupId): void
+    public function removePersonFromGroup(string $personId, string $groupId): void
     {
-        $contact = $this->personRepo->findActive($contactId);
-        if (!$contact) {
+        $person = $this->personRepo->findActive($personId);
+        if (!$person) {
             throw new InvalidArgumentException('Person not found');
         }
         $group = $this->groupRepo->findActive($groupId);
         if (!$group) {
             throw new InvalidArgumentException('Group not found');
         }
-        $contact->removeGroup($group);
-        $this->em->persist($contact);
+        $personù->removeGroup($group);
+        $this->em->persist($person);
         $this->em->flush();
     }
 

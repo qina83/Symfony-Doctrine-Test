@@ -22,12 +22,12 @@ class PersonRepositoryDoctrine extends ServiceEntityRepository implements Person
         parent::__construct($registry, Person::class);
     }
 
-    public function countActiveContact(): int
+    public function countActivePersons(): int
     {
         return $this->count(['deleted' => false]);
     }
 
-    public function findActiveContact(int $page, int $pageSize): array
+    public function findActivePersons(int $page, int $pageSize): array
     {
         return $this->findBy(['deleted' => false], null, $pageSize, $pageSize * ($page - 1));
     }

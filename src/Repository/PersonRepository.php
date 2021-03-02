@@ -8,7 +8,7 @@ use App\Model\Person;
 
 interface PersonRepository
 {
-    public function countActiveContact();
-    public function findActiveContact(int $page, int $pageSize);
+    public function countActivePersons();
+    public function findActivePersons(int $page, int $pageSize);
     public function findActive(string $id): ?Person;
 }

@@ -6,14 +6,14 @@ namespace App\Service;
 
 interface PersonService
 {
-    public function createContact(string $name): string;
-    public function updateContactName(string $contactId, string $name): void;
-    public function deleteContact(string $contactId): void;
+    public function createPerson(string $name): string;
+    public function updatePersonPersonalInfo(string $personId, string $name): void;
+    public function deletePerson(string $personId): void;
 
-    public function listActiveContact(int $page, int $pageSize): array;
-    public function find(string $contactId);
+    public function listActivePersons(int $page, int $pageSize): array;
+    public function find(string $personId);
     public function calculatePaginationInfo(int $pageSize): array;
 
-    public function addContactToGroup(string $contactId, string $groupId): void;
-    public function removeContactFromGroup(string $contactId, string $groupId): void;
+    public function addPersonToGroup(string $personId, string $groupId): void;
+    public function removePersonFromGroup(string $personId, string $groupId): void;
 }

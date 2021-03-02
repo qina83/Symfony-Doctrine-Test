@@ -13,7 +13,7 @@ class PersonTest extends TestCase
 {
     public function test_address(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $address = new Address();
 
         $person->addAddress($address);
@@ -26,7 +26,7 @@ class PersonTest extends TestCase
 
     public function test_addMultiAddress(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $address1 = new Address();
         $address2 = new Address();
 
@@ -42,7 +42,7 @@ class PersonTest extends TestCase
 
     public function test_addDoubleAddress(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $address1 = new Address();
 
         $person->addAddress($address1);
@@ -56,7 +56,7 @@ class PersonTest extends TestCase
 
     public function test_group(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $group = new Group();
 
         $person->addGroup($group);
@@ -69,7 +69,7 @@ class PersonTest extends TestCase
 
     public function test_addDoubleGroups(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $group1 = new Group();
 
         $person->addGroup($group1);
@@ -83,7 +83,7 @@ class PersonTest extends TestCase
 
     public function test_addMultiGroups(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $group1 = new Group();
         $group2 = new Group();
 
@@ -100,7 +100,7 @@ class PersonTest extends TestCase
 
     public function test_removeAddress(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $address1 = new Address();
         $address2 = new Address();
         $person->addAddress($address1);
@@ -116,7 +116,7 @@ class PersonTest extends TestCase
 
     public function test_removeGroup(): void
     {
-        $person = new Person();
+        $person = new Person("name");
         $group1 = new Group();
         $group2 = new Group();
         $person->addGroup($group1);

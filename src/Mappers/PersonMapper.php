@@ -6,18 +6,18 @@ use App\Model\Person;
 
 class PersonMapper
 {
-    public static function ContactToDto(Person $contact): array
+    public static function PersonToDto(Person $person): array
     {
-        $groups = $contact->getGroups();
+        $groups = $person->getGroups();
         $groupsDTO = [];
         foreach ($groups as $group) {
             $groupsDTO[] = GroupMapper::GroupToDto($group);
         }
 
         return [
-            'id' => $contact->getId(),
-            'name' => $contact->getName(),
-            'isDeleted' => $contact->isDeleted(),
+            'id' => $person->getId(),
+            'name' => $person->getName(),
+            'isDeleted' => $person->isDeleted(),
             'groups' => $groupsDTO,
         ];
     }

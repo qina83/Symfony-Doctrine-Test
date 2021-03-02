@@ -28,23 +28,23 @@ class PersonController extends AbstractController
     /**
      * @Route("/persons", methods={"POST"})
      */
-    public function createContact(Request $request): Response
+    public function createPerson(Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
             return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
         }
 
-        $contactName = $requestData['contactName'];
-        $contactId = $this->personService->createContact($contactName);
+        $name = $requestData['name'];
+        $personId = $this->personService->createPerson($name);
 
-        return new JsonResponse($contactId);
+        return new JsonResponse($personId);
     }
 
     /**
      * @Route("/persons", methods={"GET"})
      */
-    public function listActiveContact(Request $request): Response
+    public function listActivePerson(Request $request): Response
     {
         $pageSizePar = $request->query->get('pageSize');
         $pagePar = $request->query->get('page');
@@ -53,14 +53,14 @@ class PersonController extends AbstractController
         $page = min(self::MAX_ITEMS_PER_PAGE, intval($pagePar));
 
         $paginationInfo = $this->personService->calculatePaginationInfo($pageSize);
-        $contacts = $this->personService->listActiveContact($page, $pageSize);
-        $contactsDTO = [];
-        foreach ($contacts as $contact) {
-            $contactsDTO[] = PersonMapper::ContactToDto($contact);
+        $persons = $this->personService->listActivePersons($page, $pageSize);
+        $personsDto = [];
+        foreach ($persons as $person) {
+            $personsDto[] = PersonMapper::PersonToDto($person);
         }
 
         return new JsonResponse([
-            'items' => $contactsDTO,
+            'items' => $personsDto,
             'paginationInfo' => $paginationInfo,
         ]);
     }
@@ -68,9 +68,9 @@ class PersonController extends AbstractController
     /**
      * @Route("/persons/{personId}", methods={"DELETE"})
      */
-    public function deleteContact(string $personId): Response
+    public function deletePerson(string $personId): Response
     {
-        $this->personService->deleteContact($personId);
+        $this->personService->deletePerson($personId);
 
         return new JsonResponse('', Response::HTTP_NO_CONTENT);
     }
@@ -78,23 +78,23 @@ class PersonController extends AbstractController
     /**
      * @Route("/persons/{personId}", methods={"PUT"})
      */
-    public function updateContact(string $personId, Request $request): Response
+    public function updatePerson(string $personId, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
             return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
         }
 
-        $contactName = $requestData['contactName'];
-        $this->personService->updateContactName($personId, $contactName);
+        $newName = $requestData['name'];
+        $this->personService->updatePersonPersonalInfo($personId, $newName);
 
-        return new JsonResponse('', Response::HTTP_OK);
+        return new Response(null, Response::HTTP_OK);
     }
 
     /**
      * @Route("/persons/{personId}/groups", methods={"PUT"})
      */
-    public function addContactGroup(string $personId, Request $request): Response
+    public function addPersonGroup(string $personId, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
@@ -102,25 +102,25 @@ class PersonController extends AbstractController
         }
 
         $groupId = $requestData['groupId'];
-        $this->personService->addContactToGroup($personId, $groupId);
+        $this->personService->addPersonToGroup($personId, $groupId);
 
-        return new JsonResponse('', Response::HTTP_CREATED);
+        return new Response(null, Response::HTTP_CREATED);
     }
 
     /**
      * @Route("/persons/{personId}/groups/{groupId}", methods={"PUT"})
      */
-    public function removeContactGroup(string $personId, string $groupId): Response
+    public function removePersonGroup(string $personId, string $groupId): Response
     {
-        $this->personService->removeContactFromGroup($personId, $groupId);
+        $this->personService->removePersonFromGroup($personId, $groupId);
 
-        return new JsonResponse('', Response::HTTP_NO_CONTENT);
+        return new Response(null,  Response::HTTP_NO_CONTENT);
     }
 
     /**
      * @Route("/persons/{personId}/address", methods={"POST"})
      */
-    public function addContactAddress(string $personId, Request $request): Response
+    public function addPersonAddress(string $personId, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
         if (!$requestData) {
@@ -133,7 +133,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/persons/{personId}/address/{addressId}", methods={"DELETE"})
      */
-    public function removeContactAddress(string $personId, string $addressId): Response
+    public function removePersonAddress(string $personId, string $addressId): Response
     {
 
     }

@@ -17,13 +17,24 @@ class Person
     private Collection $addresses;
     private Collection $groups;
 
-    public function __construct()
+    public function __construct(string $name)
     {
-        $this->id = Uuid::uuid4();;
+        $this->id = Uuid::uuid4();
         $this->addresses = new ArrayCollection();
         $this->groups = new ArrayCollection();
-        $this->name = '';
+        $this->name = $name;
         $this->deleted = false;
+    }
+
+    public static function createByIdAndName(string $id, string $name): Person
+    {
+        $person = new Person($name);
+        $person->id = uuid::fromString($id);
+        return $person;
+    }
+
+    public function updatePersonalInfo(string $name){
+        $this->name = $name;
     }
 
     public function markAsDeleted(): void
@@ -41,19 +52,9 @@ class Person
         return $this->id->toString();
     }
 
-    public function setId(string $id): void
-    {
-        $this->id = Uuid::fromString($id);
-    }
-
-    public function getName(): string
+      public function getName(): string
     {
         return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
     }
 
     public function getAddresses(): Collection
