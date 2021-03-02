@@ -18,19 +18,19 @@ class PersonServiceImplTest extends TestCase
     private PersonServiceImpl $sut;
 
     private Prophet $prophet;
-    private ObjectProphecy $em;
+    private ObjectProphecy $personPersister;
     private ObjectProphecy $personRepo;
     private ObjectProphecy $groupRepo;
 
     protected function setUp(): void
     {
         $this->prophet = new Prophet();
-        $this->em = $this->prophet->prophesize("Doctrine\ORM\EntityManagerInterface");
+        $this->personPersister = $this->prophet->prophesize("App\Persister\PersonPersister");
         $this->personRepo = $this->prophet->prophesize("App\Repository\PersonRepository");
         $this->groupRepo = $this->prophet->prophesize("App\Repository\GroupRepository");
 
         $this->sut = new PersonServiceImpl(
-            $this->em->reveal(),
+            $this->personPersister->reveal(),
             $this->personRepo->reveal(),
             $this->groupRepo->reveal()
         );
@@ -43,8 +43,7 @@ class PersonServiceImplTest extends TestCase
 
     public function test_CreatePerson(): void
     {
-        $this->em->persist(Argument::any())->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->personPersister->persist(Argument::any())->shouldBeCalled();
         $this->sut->createPerson('name');
 
         self::assertTrue(true);
@@ -58,8 +57,7 @@ class PersonServiceImplTest extends TestCase
 
         $this->sut->deletePerson($personId);
 
-        $this->em->persist($person)->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->personPersister->persist($person)->shouldBeCalled();
 
         self::assertTrue($person->isDeleted());
     }
@@ -80,8 +78,7 @@ class PersonServiceImplTest extends TestCase
         $person = Person::createByIdAndName($personId, "name");
         $this->personRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($person);
 
-        $this->em->persist($person)->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->personPersister->persist($person)->shouldBeCalled();
 
         $this->sut->updatePersonPersonalInfo($personId, 'newName');
 
@@ -107,8 +104,7 @@ class PersonServiceImplTest extends TestCase
         $this->groupRepo->findActive($groupId)->willReturn($group);
         $this->personRepo->findActive($personId)->willReturn($person);
 
-        $this->em->persist($person)->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->personPersister->persist($person)->shouldBeCalled();
 
         $this->sut->addPersonToGroup($personId, $groupId);
 
@@ -125,8 +121,7 @@ class PersonServiceImplTest extends TestCase
         $this->groupRepo->findActive($groupId)->willReturn($group);
         $this->personRepo->findActive($personId)->willReturn(null);
 
-        $this->em->persist(Argument::any())->shouldNotBeCalled();
-        $this->em->flush()->shouldNotBeCalled();
+        $this->personPersister->persist(Argument::any())->shouldNotBeCalled();
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -142,8 +137,7 @@ class PersonServiceImplTest extends TestCase
         $this->groupRepo->findActive($groupId)->willReturn(null);
         $this->personRepo->findActive($personId)->willReturn($person);
 
-        $this->em->persist(Argument::any())->shouldNotBeCalled();
-        $this->em->flush()->shouldNotBeCalled();
+        $this->personPersister->persist(Argument::any())->shouldNotBeCalled();
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -161,8 +155,7 @@ class PersonServiceImplTest extends TestCase
         $this->groupRepo->findActive($groupId)->willReturn($group);
         $this->personRepo->findActive($personId)->willReturn($person);
 
-        $this->em->persist($person)->shouldBeCalled();
-        $this->em->flush()->shouldBeCalled();
+        $this->personPersister->persist($person)->shouldBeCalled();
 
         $this->sut->addPersonToGroup($personId, $groupId);
 

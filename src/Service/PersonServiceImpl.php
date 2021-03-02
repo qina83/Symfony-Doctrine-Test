@@ -5,23 +5,25 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Person;
+use App\Persister\PersonPersister;
 use App\Repository\PersonRepository;
 use App\Repository\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 
+
 class PersonServiceImpl implements PersonService
 {
-    private EntityManagerInterface $em;
+    private PersonPersister $personPersister;
     private PersonRepository $personRepo;
     private GroupRepository $groupRepo;
 
     /**
      * PersonServiceImpl constructor.
      */
-    public function __construct(EntityManagerInterface $em, PersonRepository $personRepo, GroupRepository $groupRepo)
+    public function __construct(PersonPersister $personPersister, PersonRepository $personRepo, GroupRepository $groupRepo)
     {
-        $this->em = $em;
+        $this->personPersister = $personPersister;
         $this->personRepo = $personRepo;
         $this->groupRepo = $groupRepo;
     }
@@ -29,9 +31,7 @@ class PersonServiceImpl implements PersonService
     public function createPerson(string $name): string
     {
         $person = new Person($name);
-
-        $this->em->persist($person);
-        $this->em->flush();
+        $this->personPersister->persist($person);
 
         return $person->getId();
     }
@@ -41,8 +41,7 @@ class PersonServiceImpl implements PersonService
         $person = $this->personRepo->findActive($personId);
         if (null != $person && !$person->isDeleted()) {
             $person->updatePersonalInfo($name);
-            $this->em->persist($person);
-            $this->em->flush();
+            $this->personPersister->persist($person);
         } else {
             throw new InvalidArgumentException("Person doesn't exists");
         }
@@ -53,8 +52,7 @@ class PersonServiceImpl implements PersonService
         $person = $this->personRepo->findActive($personId);
         if (null != $person) {
             $person->markAsDeleted();
-            $this->em->persist($person);
-            $this->em->flush();
+            $this->personPersister->persist($person);
         }
     }
 
@@ -91,8 +89,7 @@ class PersonServiceImpl implements PersonService
             throw new InvalidArgumentException('Group not found');
         }
         $person->addGroup($group);
-        $this->em->persist($person);
-        $this->em->flush();
+        $this->personPersister->persist($person);
     }
 
     public function removePersonFromGroup(string $personId, string $groupId): void
@@ -105,9 +102,8 @@ class PersonServiceImpl implements PersonService
         if (!$group) {
             throw new InvalidArgumentException('Group not found');
         }
-        $personù->removeGroup($group);
-        $this->em->persist($person);
-        $this->em->flush();
+        $person->removeGroup($group);
+        $this->personPersister->persist($person);
     }
 
 
