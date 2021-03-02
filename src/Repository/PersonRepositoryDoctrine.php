@@ -27,9 +27,9 @@ class PersonRepositoryDoctrine extends ServiceEntityRepository implements Person
         return $this->count(['deleted' => false]);
     }
 
-    public function findActivePersons(int $page, int $pageSize): array
+    public function findActivePersons(Page $page): array
     {
-        return $this->findBy(['deleted' => false], null, $pageSize, $pageSize * ($page - 1));
+        return $this->findBy(['deleted' => false], null, $page->getSize(), $page->getOffset());
     }
 
     public function findActive(string $id): ?Person

@@ -6,9 +6,9 @@ namespace App\Service;
 
 use App\Model\Person;
 use App\Persister\PersonPersister;
+use App\Repository\Page;
 use App\Repository\PersonRepository;
 use App\Repository\GroupRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 
 
@@ -57,20 +57,18 @@ class PersonServiceImpl implements PersonService
     }
 
 
-    public function calculatePaginationInfo(int $pageSize): array
+    public function calculatePaginationInfo(Page $page): PaginationInfo
     {
         $totalItems = $this->personRepo->countActivePersons();
-        $totalPages = ceil($totalItems / $pageSize);
+        $totalPages = intval(ceil($totalItems / $page->getSize()));
 
-        return [
-            'totalItems' => $totalItems,
-            'totalPages' => $totalPages,
-        ];
+        return new PaginationInfo($totalItems, $totalPages);
+
     }
 
-    public function listActivePersons(int $page, int $pageSize): array
+    public function listActivePersons(Page $page): array
     {
-        return $this->personRepo->findActivePersons($page, $pageSize);
+        return $this->personRepo->findActivePersons($page);
     }
 
     public function find(string $personId)

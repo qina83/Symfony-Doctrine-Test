@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Response\PersonsWebResponse;
 use App\Service\PersonService;
+use InvalidArgumentException;
+use PageMapper;
 use PersonMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PersonController extends AbstractController
 {
-    const MAX_ITEMS_PER_PAGE = 3;
     private PersonService $personService;
 
     /**
@@ -46,23 +48,11 @@ class PersonController extends AbstractController
      */
     public function listActivePerson(Request $request): Response
     {
-        $pageSizePar = $request->query->get('pageSize');
-        $pagePar = $request->query->get('page');
+        $page = PageMapper::fromRequest($request);
+        $paginationInfo = $this->personService->calculatePaginationInfo($page);
+        $persons = $this->personService->listActivePersons($page);
 
-        $pageSize = max(1, intval($pageSizePar));
-        $page = min(self::MAX_ITEMS_PER_PAGE, intval($pagePar));
-
-        $paginationInfo = $this->personService->calculatePaginationInfo($pageSize);
-        $persons = $this->personService->listActivePersons($page, $pageSize);
-        $personsDto = [];
-        foreach ($persons as $person) {
-            $personsDto[] = PersonMapper::PersonToDto($person);
-        }
-
-        return new JsonResponse([
-            'items' => $personsDto,
-            'paginationInfo' => $paginationInfo,
-        ]);
+        return new PersonsWebResponse($persons, $paginationInfo);
     }
 
     /**
@@ -80,13 +70,15 @@ class PersonController extends AbstractController
      */
     public function updatePerson(string $personId, Request $request): Response
     {
-        $requestData = json_decode($request->getContent(), true);
-        if (!$requestData) {
-            return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
+        try
+        {
+            $rawData = PersonMapper::rawDataFromRequest($request);
+            $this->personService->updatePersonPersonalInfo($personId, $rawData['name']);
         }
-
-        $newName = $requestData['name'];
-        $this->personService->updatePersonPersonalInfo($personId, $newName);
+        catch (InvalidArgumentException $ex)
+        {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        }
 
         return new Response(null, Response::HTTP_OK);
     }
@@ -114,7 +106,7 @@ class PersonController extends AbstractController
     {
         $this->personService->removePersonFromGroup($personId, $groupId);
 
-        return new Response(null,  Response::HTTP_NO_CONTENT);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
