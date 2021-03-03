@@ -7,6 +7,7 @@ namespace App\Model;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Webmozart\Assert\Assert;
 
 class Person
 {
@@ -16,8 +17,9 @@ class Person
     private Collection $addresses;
     private Collection $groups;
 
-    public function __construct(string $name)
+    private function __construct(string $name)
     {
+        Assert::notEmpty($name);
         $this->id = Uuid::uuid4();
         $this->addresses = new ItemCollection();
         $this->groups = new ItemCollection();
@@ -25,9 +27,14 @@ class Person
         $this->deleted = false;
     }
 
-    public static function createByIdAndName(string $id, string $name): Person
+    public static function fromName(string $name): Person
     {
-        $person = new Person($name);
+        return new Person($name);
+    }
+
+    public static function fromIdAndName(string $id, string $name): Person
+    {
+        $person = self::fromName($name);
         $person->id = uuid::fromString($id);
         return $person;
     }

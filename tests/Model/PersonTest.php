@@ -13,7 +13,7 @@ class PersonTest extends TestCase
 {
     public function test_address(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $address = new Address();
 
         $person->addAddress($address);
@@ -26,7 +26,7 @@ class PersonTest extends TestCase
 
     public function test_addMultiAddress(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $address1 = new Address();
         $address2 = new Address();
 
@@ -42,7 +42,7 @@ class PersonTest extends TestCase
 
     public function test_addDoubleAddress(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $address1 = new Address();
 
         $person->addAddress($address1);
@@ -56,7 +56,7 @@ class PersonTest extends TestCase
 
     public function test_group(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $group = new Group("groupName");
 
         $person->addGroup($group);
@@ -69,7 +69,7 @@ class PersonTest extends TestCase
 
     public function test_addDoubleGroups(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $group1 =new Group("groupName");
 
         $person->addGroup($group1);
@@ -83,7 +83,7 @@ class PersonTest extends TestCase
 
     public function test_addMultiGroups(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $group1 = new Group("groupName");
         $group2 = new Group("groupName");
 
@@ -100,7 +100,7 @@ class PersonTest extends TestCase
 
     public function test_removeAddress(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $address1 = new Address();
         $address2 = new Address();
         $person->addAddress($address1);
@@ -116,7 +116,7 @@ class PersonTest extends TestCase
 
     public function test_removeGroup(): void
     {
-        $person = new Person("name");
+        $person = $person = Person::fromName("name");
         $group1 = new Group("groupName");
         $group2 = new Group("groupName");
         $person->addGroup($group1);
@@ -129,4 +129,10 @@ class PersonTest extends TestCase
         self::assertCount(1, $groups);
         self::assertEquals($group2, $groups->first());
     }
+
+    public function test_createWithEmptyName_mustThrowException(){
+        self::expectException(\Exception::class);
+        $person = $person = Person::fromName("");
+    }
+
 }

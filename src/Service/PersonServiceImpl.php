@@ -31,7 +31,7 @@ class PersonServiceImpl implements PersonService
 
     public function createPerson(string $name): string
     {
-        $person = new Person($name);
+        $person = Person::fromName($name);
         $this->personPersister->persist($person);
 
         return $person->getId();

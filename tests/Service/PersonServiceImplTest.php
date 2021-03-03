@@ -6,6 +6,7 @@ namespace Service;
 
 use App\Model\Person;
 use App\Model\Group;
+use App\Repository\Page;
 use App\Service\PersonServiceImpl;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -52,7 +53,7 @@ class PersonServiceImplTest extends TestCase
     public function test_DeletePerson(): void
     {
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $person = Person::createByIdAndName($personId, "name");
+        $person = Person::fromIdAndName($personId, "name");
         $this->personRepo->findActive($personId)->willReturn($person);
 
         $this->sut->deletePerson($personId);
@@ -75,7 +76,7 @@ class PersonServiceImplTest extends TestCase
     public function test_updatePersonName(): void
     {
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
-        $person = Person::createByIdAndName($personId, "name");
+        $person = Person::fromIdAndName($personId, "name");
         $this->personRepo->findActive('da480bf3-8adb-4626-ba03-68de2d1c8368')->willReturn($person);
 
         $this->personPersister->persist($person)->shouldBeCalled();
@@ -98,7 +99,7 @@ class PersonServiceImplTest extends TestCase
     {
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $person = Person::createByIdAndName($personId, "name");
+        $person = Person::fromIdAndName($personId, "name");
         $group = Group::createByIdAndName($groupId, "groupName");
 
         $this->groupRepo->findActive($groupId)->willReturn($group);
@@ -132,7 +133,7 @@ class PersonServiceImplTest extends TestCase
     {
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $person = Person::createByIdAndName($personId, "name");
+        $person = Person::fromIdAndName($personId, "name");
 
         $this->groupRepo->findActive($groupId)->willReturn(null);
         $this->personRepo->findActive($personId)->willReturn($person);
@@ -148,7 +149,7 @@ class PersonServiceImplTest extends TestCase
     {
         $personId = 'da480bf3-8adb-4626-ba03-68de2d1c8368';
         $groupId = 'b0c09227-5cc1-4869-bbdb-008cae9c3e3d';
-        $person = Person::createByIdAndName($personId, "name");
+        $person = Person::fromIdAndName($personId, "name");
         $group = Group::createByIdAndName($groupId, "groupName");
         $person->addGroup($group);
 
@@ -188,8 +189,8 @@ class PersonServiceImplTest extends TestCase
     public function test_calculatePaginationInfo($pageSize, $totalItems, $excpectedResults): void
     {
         $this->personRepo->countActivePersons()->willReturn($totalItems);
-        $paginationInfo = $this->sut->calculatePaginationInfo($pageSize);
+        $paginationInfo = $this->sut->calculatePaginationInfo(new Page($pageSize, 0));
 
-        self::assertEquals($excpectedResults, $paginationInfo['totalPages']);
+        self::assertEquals($excpectedResults, $paginationInfo->getTotalPages());
     }
 }
