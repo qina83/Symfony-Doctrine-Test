@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Model\Person;
 use App\Persister\PersonPersister;
 use App\Repository\Page;
+use App\Repository\PaginationInfo;
 use App\Repository\PersonRepository;
 use App\Repository\GroupRepository;
 use InvalidArgumentException;

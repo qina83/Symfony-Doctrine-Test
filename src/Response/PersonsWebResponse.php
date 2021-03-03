@@ -4,7 +4,7 @@
 namespace App\Response;
 
 
-use App\Service\PaginationInfo;
+use App\Repository\PaginationInfo;
 use PaginationInfoMapper;
 use PersonMapper;
 use Symfony\Component\HttpFoundation\JsonResponse;

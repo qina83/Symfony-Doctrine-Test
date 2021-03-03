@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Response\PersonsWebResponse;
+use App\Response\InvalidSchemaWebResponse;
+use App\Response\IdWebResponse;
 use App\Service\PersonService;
-use InvalidArgumentException;
 use PageMapper;
-use PersonMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,29 +18,31 @@ use Symfony\Component\Routing\Annotation\Route;
 class PersonController extends AbstractController
 {
     private PersonService $personService;
+    private JsonSchemaValidator $jsonValidator;
 
     /**
      * PersonController constructor.
+     * @param PersonService $personService
+     * @param JsonSchemaValidator $jsonValidator
      */
-    public function __construct(PersonService $personService)
+    public function __construct(PersonService $personService, JsonSchemaValidator $jsonValidator)
     {
         $this->personService = $personService;
+        $this->jsonValidator = $jsonValidator;
     }
+
 
     /**
      * @Route("/persons", methods={"POST"})
      */
     public function createPerson(Request $request): Response
     {
-        $requestData = json_decode($request->getContent(), true);
-        if (!$requestData) {
-            return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
-        }
+        $parsedBody = (object)json_decode($request->getContent(), true);
+        $errors = $this->jsonValidator->validate($parsedBody, $this->requestJsonSchemaForPerson());
+        if (!empty($errors)) return new InvalidSchemaWebResponse($errors);
 
-        $name = $requestData['name'];
-        $personId = $this->personService->createPerson($name);
-
-        return new JsonResponse($personId);
+        $personId = $this->personService->createPerson($parsedBody->name);
+        return new IdWebResponse($personId);
     }
 
     /**
@@ -61,8 +63,7 @@ class PersonController extends AbstractController
     public function deletePerson(string $personId): Response
     {
         $this->personService->deletePerson($personId);
-
-        return new JsonResponse('', Response::HTTP_NO_CONTENT);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -70,17 +71,12 @@ class PersonController extends AbstractController
      */
     public function updatePerson(string $personId, Request $request): Response
     {
-        try
-        {
-            $rawData = PersonMapper::rawDataFromRequest($request);
-            $this->personService->updatePersonPersonalInfo($personId, $rawData['name']);
-        }
-        catch (InvalidArgumentException $ex)
-        {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
-        }
+        $parsedBody = (object)json_decode($request->getContent(), true);
+        $errors = $this->jsonValidator->validate($parsedBody, $this->requestJsonSchemaForPerson());
+        if (!empty($errors)) return new InvalidSchemaWebResponse($errors);
 
-        return new Response(null, Response::HTTP_OK);
+        $this->personService->updatePersonPersonalInfo($personId, $parsedBody['name']);
+        return new Response();
     }
 
     /**
@@ -88,13 +84,11 @@ class PersonController extends AbstractController
      */
     public function addPersonGroup(string $personId, Request $request): Response
     {
-        $requestData = json_decode($request->getContent(), true);
-        if (!$requestData) {
-            return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
-        }
+        $parsedBody = (object)json_decode($request->getContent(), true);
+        $errors = $this->jsonValidator->validate($parsedBody, $this->requestJsonSchemaForGroup());
+        if (!empty($errors)) return new InvalidSchemaWebResponse($errors);
 
-        $groupId = $requestData['groupId'];
-        $this->personService->addPersonToGroup($personId, $groupId);
+        $this->personService->addPersonToGroup($personId, $parsedBody->groupId);
 
         return new Response(null, Response::HTTP_CREATED);
     }
@@ -109,25 +103,29 @@ class PersonController extends AbstractController
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * @Route("/persons/{personId}/address", methods={"POST"})
-     */
-    public function addPersonAddress(string $personId, Request $request): Response
+    private function requestJsonSchemaForGroup(): array
     {
-        $requestData = json_decode($request->getContent(), true);
-        if (!$requestData) {
-            return new JsonResponse('Bad json string', Response::HTTP_BAD_REQUEST);
-        }
-
-        $groupId = $requestData['groupId'];
+        return [
+            'type' => 'object',
+            'required' => ['groupId'],
+            'properties' => [
+                'groupId' => [
+                    'type' => 'string',
+                ],
+            ]
+        ];
     }
 
-    /**
-     * @Route("/persons/{personId}/address/{addressId}", methods={"DELETE"})
-     */
-    public function removePersonAddress(string $personId, string $addressId): Response
+    private function requestJsonSchemaForPerson(): array
     {
-
+        return [
+            'type' => 'object',
+            'required' => ['name'],
+            'properties' => [
+                'name' => [
+                    'type' => 'string',
+                ],
+            ]
+        ];
     }
-
 }

@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Service\PaginationInfo;
+use App\Repository\PaginationInfo;
 
 class PaginationInfoMapper
 {

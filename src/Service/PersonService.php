@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Repository\Page;
+use App\Repository\PaginationInfo;
 
 interface PersonService
 {

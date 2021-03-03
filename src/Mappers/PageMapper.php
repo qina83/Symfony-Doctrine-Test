@@ -12,4 +12,5 @@ class PageMapper
         $pagePar = $request->query->get('page');
         return new Page(intval($pageSizePar),  intval($pagePar));
     }
+
 }
